@@ -1,8 +1,7 @@
 'use client';
 import Image from "next/image";
 import Link from "next/link";
-  import Lenis from "@studio-freight/lenis";
-import { useEffect, useRef } from "react";
+
 const Footer = ({ FooterData }) => {
   // Safely destructure data with default empty objects/arrays to ensure data paths exist
   const {
@@ -16,39 +15,10 @@ const Footer = ({ FooterData }) => {
   } = FooterData || {}; 
   const navMenus = navigation[0]?.menus ?? [];
 
-  const lenisRef = useRef(null);
-  
-    useEffect(() => {
-      const scroller = new Lenis({
-        duration: 1.2, // speed of scroll
-        easing: (t) => 1 - Math.pow(1 - t, 3),
-        smoothWheel: true,
-        smoothTouch: false,
-      });
-  
-      function raf(time) {
-        scroller.raf(time);
-        requestAnimationFrame(raf);
-      }
-  
-      requestAnimationFrame(raf);
-      lenisRef.current = scroller;
-  
-      return () => {
-        scroller.destroy();
-      };
-    }, []);
-
     const handleSmoothScroll = (e, targetId) => {
     if (!targetId?.startsWith('#')) return;
     e.preventDefault();
-    const targetEl = document.querySelector(targetId);
-    if (targetEl && lenisRef.current) {
-      lenisRef.current.scrollTo(targetEl, {
-        offset: -80, // adjust for sticky header height
-        duration: 1.2,
-      });
-    }
+    document.querySelector(targetId)?.scrollIntoView({ behavior: 'smooth' });
   };
   return (
     <>

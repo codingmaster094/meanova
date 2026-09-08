@@ -1,8 +1,7 @@
 'use client'
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import Lenis from "@studio-freight/lenis";
 
 const OffenStellen = (
     {
@@ -12,40 +11,10 @@ const OffenStellen = (
         BTN
     }
 ) => {
-    const lenisRef = useRef(null);
-
-    useEffect(() => {
-        const scroller = new Lenis({
-            duration: 1.2, // speed of scroll
-            easing: (t) => 1 - Math.pow(1 - t, 3),
-            smoothWheel: true,
-            smoothTouch: false,
-        });
-
-        function raf(time) {
-            scroller.raf(time);
-            requestAnimationFrame(raf);
-        }
-
-        requestAnimationFrame(raf);
-        lenisRef.current = scroller;
-
-        return () => {
-            scroller.destroy();
-        };
-    }, []);
-
-    // ✅ Smooth scroll handler for internal section links
     const handleSmoothScroll = (e, targetId) => {
         if (!targetId?.startsWith('#')) return;
         e.preventDefault();
-        const targetEl = document.querySelector(targetId);
-        if (targetEl && lenisRef.current) {
-            lenisRef.current.scrollTo(targetEl, {
-                offset: -80, // adjust for sticky header height
-                duration: 1.2,
-            });
-        }
+        document.querySelector(targetId)?.scrollIntoView({ behavior: 'smooth' });
     };
     return (
         <>

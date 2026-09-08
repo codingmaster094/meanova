@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import OffCanvas from "./OffCanvas";
 import { usePathname } from "next/navigation";
-import Lenis from "@studio-freight/lenis";
 
 const Header = ({ HeaderData, MenusData }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,23 +17,34 @@ const Header = ({ HeaderData, MenusData }) => {
   const menus = MenusData?.menus ?? [];
 
   useEffect(() => {
-    const scroller = new Lenis({
-      duration: 1.2, // speed of scroll
-      easing: (t) => 1 - Math.pow(1 - t, 3),
-      smoothWheel: true,
-      smoothTouch: false,
-    });
+    let cancelled = false;
+    let scroller;
 
-    function raf(time) {
-      scroller.raf(time);
-      requestAnimationFrame(raf);
-    }
+    import("@studio-freight/lenis")
+      .then(({ default: Lenis }) => {
+        if (cancelled) return;
+        scroller = new Lenis({
+          duration: 1.2,
+          easing: (t) => 1 - Math.pow(1 - t, 3),
+          smoothWheel: true,
+          smoothTouch: false,
+        });
 
-    requestAnimationFrame(raf);
-    lenisRef.current = scroller;
+        function raf(time) {
+          scroller.raf(time);
+          requestAnimationFrame(raf);
+        }
+
+        requestAnimationFrame(raf);
+        lenisRef.current = scroller;
+      })
+      .catch((error) => {
+        console.error("Lenis failed to load:", error);
+      });
 
     return () => {
-      scroller.destroy();
+      cancelled = true;
+      scroller?.destroy();
     };
   }, []);
 

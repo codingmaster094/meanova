@@ -1,14 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Link from "next/link";
-import Lenis from "@studio-freight/lenis";
 
 const CardSlider = ({ heading, cards }) => {
   const items = Array.isArray(cards) ? cards : [];
@@ -82,7 +81,6 @@ const CardSlider = ({ heading, cards }) => {
 
 const Tab2 = ({ data }) => {
   const [mainTab, setMainTab] = useState(0);
-  const lenisRef = useRef(null);
 
   const tabs = [
     {
@@ -95,37 +93,10 @@ const Tab2 = ({ data }) => {
     },
   ].filter((tab) => tab.content);
 
-  useEffect(() => {
-    const scroller = new Lenis({
-      duration: 1.2,
-      easing: (t) => 1 - Math.pow(1 - t, 3),
-      smoothWheel: true,
-      smoothTouch: false,
-    });
-
-    function raf(time) {
-      scroller.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-    lenisRef.current = scroller;
-
-    return () => {
-      scroller.destroy();
-    };
-  }, []);
-
   const handleSmoothScroll = (e, targetId) => {
     if (!targetId?.startsWith("#")) return;
     e.preventDefault();
-    const targetEl = document.querySelector(targetId);
-    if (targetEl && lenisRef.current) {
-      lenisRef.current.scrollTo(targetEl, {
-        offset: -80,
-        duration: 1.2,
-      });
-    }
+    document.querySelector(targetId)?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {

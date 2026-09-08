@@ -58,7 +58,11 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: mongooseAdapter({
-    url: process.env.DATABASE_URI || '',
+    url: process.env.DATABASE_URI || 'mongodb://127.0.0.1:27017/meanova',
+    connectOptions: {
+      serverSelectionTimeoutMS: 3000,
+      connectTimeoutMS: 3000,
+    },
   }),
   sharp,
   plugins: [

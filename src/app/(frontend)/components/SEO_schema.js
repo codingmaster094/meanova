@@ -7,9 +7,9 @@ const SchemaInjector = dynamic(() => import("../components/SchemaInjector"), {
   ssr: true,
 });
 
-const SEO_schema = async ({ slug, faqs }) => {
+const SEO_schema = async ({ slug, faqs, data }) => {
   try {
-    const metadata = await Alldata(slug);
+    const metadata = data || (await Alldata(slug));
     const schemaJSON = metadata?.seo || null;
     const author = metadata || null;
     if (!schemaJSON && (!faqs || faqs.length === 0)) return null;

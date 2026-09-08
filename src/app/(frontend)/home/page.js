@@ -5,9 +5,6 @@ import OffenStellen from "../components/OffenStellen"
 import FAQ from "../components/FAQ"
 import Kontakt from "../components/Kontakt"
 import Tab2 from "../components/Tab2"
-import "swiper/css";
-import "swiper/css/navigation";
-import 'swiper/css/pagination';
 import Alldata from "../untils/AllDataFatch"
 import SEO_schema from "../components/SEO_schema"
 export const dynamic = "force-dynamic";
@@ -26,7 +23,7 @@ const page = async() => {
   }
   return (
     <>
-      <SEO_schema slug="home" faqs={HomePageData?.FaqSection?.FaqContent} />
+      <SEO_schema slug="home" data={HomePageData} faqs={HomePageData?.FaqSection?.FaqContent} />
       <HeroSection
         Heading={HomePageData?.hero?.Heading}
         SubHeading={HomePageData?.hero?.SubHeading}
