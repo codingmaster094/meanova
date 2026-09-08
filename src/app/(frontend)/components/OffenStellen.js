@@ -37,6 +37,7 @@ const OffenStellen = (
 
     // ✅ Smooth scroll handler for internal section links
     const handleSmoothScroll = (e, targetId) => {
+        if (!targetId?.startsWith('#')) return;
         e.preventDefault();
         const targetEl = document.querySelector(targetId);
         if (targetEl && lenisRef.current) {
@@ -45,7 +46,6 @@ const OffenStellen = (
                 duration: 1.2,
             });
         }
-        setIsOpen(false); // close off-canvas if open
     };
     return (
         <>
@@ -56,35 +56,40 @@ const OffenStellen = (
                             <div className="w-full lg:w-1/2 xxl:w-9/12 flex flex-col gap-32 ">
                                 <div className='mb-24'>
                                     <div className="mb-24">
-                                        <h2 className="text-h2/snug font-normal font-jakarta" dangerouslySetInnerHTML={{ __html: Heading }}>
+                                        {Heading ? (
+                                        <h2 className="text-h2/snug font-normal font-jakarta" dangerouslySetInnerHTML={{ __html: typeof Heading === 'string' ? Heading : '' }}>
                                         </h2>
+                                        ) : null}
                                     </div>
                                     <div className='line max-w-225 w-full border-1 border-solid border-grey1'></div>
                                 </div>
                                 <div className="space-y-24 text-dark">
-                                    {Description &&
+                                    {Array.isArray(Description) &&
                                         Description.map((block, index) => {
-                                            if (block.type === "list") {
+                                            const text = Array.isArray(block?.children)
+                                                ? block.children.map((child) => child?.text || '').join(' ')
+                                                : ''
+                                            if (block?.type === "list") {
                                                 return (
                                                     <ul key={index} className="pl-20 list-disc space-y-8">
-                                                        {block.children.map((item, i) => (
-                                                            <li key={i}>{item.children[0].text}</li>
+                                                        {(block.children || []).map((item, i) => (
+                                                            <li key={i}>{item?.children?.[0]?.text || ''}</li>
                                                         ))}
                                                     </ul>
                                                 );
-                                            } else if (block.type === "paragraph") {
+                                            } else if (block?.type === "paragraph") {
                                                 return (
                                                     <p key={index}>
-                                                        {block.children.map((child) => child.text).join(" ")}
+                                                        {text}
                                                     </p>
                                                 );
-                                            } else if (block.type === "heading") {
+                                            } else if (block?.type === "heading") {
                                                 return (
                                                     <span
                                                         key={index}
                                                         className="block font-medium"
                                                         dangerouslySetInnerHTML={{
-                                                            __html: block.children.map((child) => child.text).join(" "),
+                                                            __html: text,
                                                         }}
                                                     ></span>
                                                 );

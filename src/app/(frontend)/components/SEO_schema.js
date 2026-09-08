@@ -27,8 +27,8 @@ const SEO_schema = async ({ slug, faqs }) => {
             "@id": pageUrl
           },
           "name": "FAQ – Psychotherapie",
-          "headline": schemaJSON.meta.title,
-          "description": schemaJSON.meta.description,
+          "headline": schemaJSON?.meta?.title || "",
+          "description": schemaJSON?.meta?.description || "",
           "datePublished":author.publishedAt,
           "dateModified": author.updatedAt,
           // "author":{

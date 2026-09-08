@@ -1,20 +1,36 @@
-// layout.js (app/layout.js)
-
-import Header from "../(frontend)/header/page"; // <-- PROBLEM IS HERE
-import "../../../public/css/globals.css";
-import Footer from "../(frontend)/footer/page";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 import Cookie from "./components/Cookie";
+import Alldata from "./untils/AllDataFatch";
+import "../../../public/css/globals.css";
 
 export const dynamic = "force-dynamic";
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  let HeaderData = null;
+  let MenusData = null;
+  let FooterData = null;
+
+  try {
+    const [header, menus, footer] = await Promise.all([
+      Alldata("header"),
+      Alldata("menus"),
+      Alldata("footer"),
+    ]);
+    HeaderData = header;
+    MenusData = menus;
+    FooterData = footer;
+  } catch (error) {
+    console.error("Layout CMS fetch failed:", error);
+  }
+
   return (
     <html lang="de">
       <body>
-        <Header />
+        <Header HeaderData={HeaderData} MenusData={MenusData} />
         {children}
-        <Footer />
-         <Cookie />
+        <Footer FooterData={FooterData} />
+        <Cookie />
       </body>
     </html>
   );

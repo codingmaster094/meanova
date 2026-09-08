@@ -1,19 +1,8 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 
 export default function FAQ({ Section_Show, title, FAQ_Data }) {
-  useEffect(() => {
-    setTimeout(() => {
-      const accordions = Array.from(document.querySelectorAll(".accordion-item"));
-      if (!accordions.length) return;
-
-      return () => {
-        handlers.forEach(({ header, handler }) => {
-          if (header && handler) header.removeEventListener("click", handler);
-        });
-      };
-    }, 100);
-  }, []);
+  const [openIndex, setOpenIndex] = useState(0);
 
   if (!Section_Show || !FAQ_Data?.length) return null;
 
@@ -70,11 +59,13 @@ export default function FAQ({ Section_Show, title, FAQ_Data }) {
               return (
                 <div
                   key={faq.id || index}
-                  className="accordion-item border border-dark overflow-hidden active"
+                  className={`accordion-item border border-dark overflow-hidden ${openIndex === index ? "active" : ""}`}
                 >
                   <button
+                    type="button"
                     className="accordion-header w-full flex justify-between items-center px-24 py-24 text-left font-jakarta text-h3/snug cursor-pointer"
                     aria-label={faq.title}
+                    onClick={() => setOpenIndex(openIndex === index ? -1 : index)}
                   >
                     <span>{faq.title}</span>
                     {/* <span className="icon">-</span> */}

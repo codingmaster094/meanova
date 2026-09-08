@@ -10,6 +10,6 @@ export default async function Alldata(params) {
     });
   } catch (error) {
     console.error("Error in Alldata:", error);
-    throw error;
+    return null;
   }
 }

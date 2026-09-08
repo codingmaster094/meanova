@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+import { asHtml, lexicalText } from '../untils/lexicalText'
 const Personalvermittlung = (
     {
         Side_Image,
@@ -17,37 +18,37 @@ const Personalvermittlung = (
                                 {
                                     Heading &&
                                     <div className="text-white">
-                                        <h2 className="text-h2/snug font-normal font-jakarta" dangerouslySetInnerHTML={{ __html: Heading }}></h2>
+                                        <h2 className="text-h2/snug font-normal font-jakarta" dangerouslySetInnerHTML={{ __html: asHtml(Heading) }}></h2>
                                     </div>
                                 }
                                 <div className='line max-w-225 w-full border-1 border-solid border-grey1'></div>
                                 <div className="text-body space-y-16">
-                                    {Description &&
+                                    {Array.isArray(Description) &&
                                         Description.map((block, index) => {
-                                            if (block.type === "list") {
+                                            if (block?.type === "list") {
                                                 return (
                                                     <ul key={index} className="leading-snug pl-24 [&_li]:list-disc space-y-16">
-                                                        {block.children.map((item, i) => (
+                                                        {(block.children || []).map((item, i) => (
                                                             <li key={i}>
-                                                                {item.children[0].text}
+                                                                {lexicalText(item)}
                                                             </li>
                                                         ))}
                                                     </ul>
                                                 );
-                                            } else if (block.type === "paragraph") {
+                                            } else if (block?.type === "paragraph") {
                                                 return (
 
                                                     <p key={index}>
-                                                        {block.children.map((child) => child.text).join(" ")}
+                                                        {lexicalText(block)}
                                                     </p>
 
                                                 );
-                                            } else if (block.type === "heading") {
+                                            } else if (block?.type === "heading") {
                                                 return (
                                                     <h3
                                                         key={index}
                                                         className="text-h3 font-medium text-center px-16"
-                                                        dangerouslySetInnerHTML={{ __html: block.children.map((child) => child.text).join(" ") }}
+                                                        dangerouslySetInnerHTML={{ __html: lexicalText(block) }}
                                                     ></h3>
                                                 );
                                             } else {

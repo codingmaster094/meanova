@@ -36,9 +36,12 @@ export default buildConfig({
     },
   },
   cors: [
-  'https://mea-nova.vercel.app',
-  'http://localhost:3000',
-],
+    siteURL,
+    'https://mea-nova.vercel.app',
+    'https://meanova.vercel.app',
+    'http://localhost:3000',
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '',
+  ].filter(Boolean),
   collections: [Users, Media , Pages],
   globals: [
     Header,
@@ -50,7 +53,7 @@ export default buildConfig({
     Robots,
   ],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: process.env.PAYLOAD_SECRET || 'payload-secret-placeholder',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
@@ -60,11 +63,11 @@ export default buildConfig({
   sharp,
   plugins: [
      vercelBlobStorage({
-      enabled: true,
+      enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
       collections: {
-        media: true, // Media collection uploads go to Vercel Blob
+        media: true,
       },
-      token: process.env.BLOB_READ_WRITE_TOKEN || "vercel_blob_rw_a33k2k3LHGp3BLlE_VI4gwBk5tTRjRMJDPdWrNDbvd4Z5Oj", // Set in Vercel env
+      token: process.env.BLOB_READ_WRITE_TOKEN,
     }),
   ],
 })

@@ -44,7 +44,14 @@ const getPagesSitemap = unstable_cache(
 )
 
 export async function GET() {
-  const sitemap = await getPagesSitemap()
-
-  return getServerSideSitemap(sitemap)
+  try {
+    const sitemap = await getPagesSitemap()
+    return getServerSideSitemap(sitemap)
+  } catch (error) {
+    console.error('pages-sitemap error:', error)
+    const SITE_URL = process.env.BASE_DOAMAIN || 'https://mea-nova.vercel.app'
+    return getServerSideSitemap([
+      { loc: `${SITE_URL}/`, lastmod: new Date().toISOString() },
+    ])
+  }
 }

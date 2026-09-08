@@ -4,7 +4,11 @@ import { withPayload } from '@payloadcms/next/withPayload'
 const nextConfig = {
   allowedDevOrigins: ['192.168.1.31', 'localhost'],
   images: {
-   domains: ['mea-nova.vercel.app'],
+    domains: [
+      'mea-nova.vercel.app',
+      'meanova.vercel.app',
+      'public.blob.vercel-storage.com',
+    ],
     unoptimized: true,
      formats: ['image/avif', 'image/webp'],
   },

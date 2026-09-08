@@ -40,6 +40,7 @@ const Footer = ({ FooterData }) => {
     }, []);
 
     const handleSmoothScroll = (e, targetId) => {
+    if (!targetId?.startsWith('#')) return;
     e.preventDefault();
     const targetEl = document.querySelector(targetId);
     if (targetEl && lenisRef.current) {
@@ -48,7 +49,6 @@ const Footer = ({ FooterData }) => {
         duration: 1.2,
       });
     }
-    setIsOpen(false); // close off-canvas if open
   };
   return (
     <>
