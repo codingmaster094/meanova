@@ -491,86 +491,75 @@ export interface Home {
       [k: string]: unknown;
     } | null;
   };
-  unternehmen?: {
-    link_title?:
-      | {
-          title?: {
-            label?: string | null;
-          };
-          sub_title?:
-            | {
-                links?:
-                  | {
-                      label?: string | null;
-                      sliderHeading?: string | null;
-                      slider?:
-                        | {
-                            'Slider Item'?:
-                              | {
-                                  sliderImage?: (string | null) | Media;
-                                  Heading?: string | null;
-                                  richText?: {
-                                    root: {
-                                      type: string;
-                                      children: {
-                                        type: any;
-                                        version: number;
-                                        [k: string]: unknown;
-                                      }[];
-                                      direction: ('ltr' | 'rtl') | null;
-                                      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                                      indent: number;
-                                      version: number;
-                                    };
-                                    [k: string]: unknown;
-                                  } | null;
-                                  id?: string | null;
-                                }[]
-                              | null;
-                            'CTA Item'?:
-                              | {
-                                  CTAHeading?: string | null;
-                                  richText?: {
-                                    root: {
-                                      type: string;
-                                      children: {
-                                        type: any;
-                                        version: number;
-                                        [k: string]: unknown;
-                                      }[];
-                                      direction: ('ltr' | 'rtl') | null;
-                                      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                                      indent: number;
-                                      version: number;
-                                    };
-                                    [k: string]: unknown;
-                                  } | null;
-                                  CTA_link?: {
-                                    label?: string | null;
-                                    url?: string | null;
-                                    target?: ('_self' | '_blank') | null;
-                                  };
-                                  id?: string | null;
-                                }[]
-                              | null;
-                            id?: string | null;
-                          }[]
-                        | null;
-                      id?: string | null;
-                    }[]
-                  | null;
-                id?: string | null;
-              }[]
-            | null;
-          id?: string | null;
-        }[]
-      | null;
-    Sub_link_title?:
-      | {
-          label?: string | null;
-          id?: string | null;
-        }[]
-      | null;
+  unternehmen: {
+    unternehmenTab: {
+      /**
+       * Wird als klickbarer Tab angezeigt (z. B. Unternehmen oder Kandidat:innen).
+       */
+      tabLabel: string;
+      topHeading?: string | null;
+      topCards?:
+        | {
+            icon?: (string | null) | Media;
+            heading?: string | null;
+            text?: string | null;
+            id?: string | null;
+          }[]
+        | null;
+      ctaHeading?: string | null;
+      ctaText?: string | null;
+      ctaLink?: {
+        label?: string | null;
+        /**
+         * z. B. #kontakt oder /#kontakt
+         */
+        url?: string | null;
+        target?: ('_self' | '_blank') | null;
+      };
+      bottomHeading?: string | null;
+      bottomCards?:
+        | {
+            icon?: (string | null) | Media;
+            heading?: string | null;
+            text?: string | null;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    kandidatenTab: {
+      /**
+       * Wird als klickbarer Tab angezeigt (z. B. Unternehmen oder Kandidat:innen).
+       */
+      tabLabel: string;
+      topHeading?: string | null;
+      topCards?:
+        | {
+            icon?: (string | null) | Media;
+            heading?: string | null;
+            text?: string | null;
+            id?: string | null;
+          }[]
+        | null;
+      ctaHeading?: string | null;
+      ctaText?: string | null;
+      ctaLink?: {
+        label?: string | null;
+        /**
+         * z. B. #kontakt oder /#kontakt
+         */
+        url?: string | null;
+        target?: ('_self' | '_blank') | null;
+      };
+      bottomHeading?: string | null;
+      bottomCards?:
+        | {
+            icon?: (string | null) | Media;
+            heading?: string | null;
+            text?: string | null;
+            id?: string | null;
+          }[]
+        | null;
+    };
   };
   offeneStellen?: {
     offeneStellenImage?: (string | null) | Media;
@@ -914,60 +903,69 @@ export interface HomeSelect<T extends boolean = true> {
   unternehmen?:
     | T
     | {
-        link_title?:
+        unternehmenTab?:
           | T
           | {
-              title?:
+              tabLabel?: T;
+              topHeading?: T;
+              topCards?:
+                | T
+                | {
+                    icon?: T;
+                    heading?: T;
+                    text?: T;
+                    id?: T;
+                  };
+              ctaHeading?: T;
+              ctaText?: T;
+              ctaLink?:
                 | T
                 | {
                     label?: T;
+                    url?: T;
+                    target?: T;
                   };
-              sub_title?:
+              bottomHeading?: T;
+              bottomCards?:
                 | T
                 | {
-                    links?:
-                      | T
-                      | {
-                          label?: T;
-                          sliderHeading?: T;
-                          slider?:
-                            | T
-                            | {
-                                'Slider Item'?:
-                                  | T
-                                  | {
-                                      sliderImage?: T;
-                                      Heading?: T;
-                                      richText?: T;
-                                      id?: T;
-                                    };
-                                'CTA Item'?:
-                                  | T
-                                  | {
-                                      CTAHeading?: T;
-                                      richText?: T;
-                                      CTA_link?:
-                                        | T
-                                        | {
-                                            label?: T;
-                                            url?: T;
-                                            target?: T;
-                                          };
-                                      id?: T;
-                                    };
-                                id?: T;
-                              };
-                          id?: T;
-                        };
+                    icon?: T;
+                    heading?: T;
+                    text?: T;
                     id?: T;
                   };
-              id?: T;
             };
-        Sub_link_title?:
+        kandidatenTab?:
           | T
           | {
-              label?: T;
-              id?: T;
+              tabLabel?: T;
+              topHeading?: T;
+              topCards?:
+                | T
+                | {
+                    icon?: T;
+                    heading?: T;
+                    text?: T;
+                    id?: T;
+                  };
+              ctaHeading?: T;
+              ctaText?: T;
+              ctaLink?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    target?: T;
+                  };
+              bottomHeading?: T;
+              bottomCards?:
+                | T
+                | {
+                    icon?: T;
+                    heading?: T;
+                    text?: T;
+                    id?: T;
+                  };
             };
       };
   offeneStellen?:
