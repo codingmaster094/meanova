@@ -49,7 +49,7 @@
 
 - Jump to Payload **3.88** + Next **15.4.11** (separate deploy after admin login works).
 - Moving all `src/app/components/*` configs into `src/fields` (imports would churn; wrappers added instead).
-- Existing homepage global data must be copied into a Pages document with slug `home` before the old global data is removed.
+- Homepage content has been migrated into the Pages document with slug `home`; the old homepage global is removed.
 - Designing unique UI for every conceptual block (Gallery, Pricing, Team, …). Add a new block in `src/blocks/index.ts` + one renderer entry when needed.
 - Registering `seoPlugin()` (would duplicate the existing `seo` group).
 

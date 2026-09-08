@@ -16,7 +16,6 @@ import { Datenschutzerklärung } from './globals/datenschutzerklärung/config'
 import { Robots } from './globals/robots/config'
 import { Pages } from './collections/Pages'
 import { SiteSettings } from './globals/SiteSettings/config'
-import { HomePage } from './globals/home/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -78,7 +77,6 @@ export default buildConfig({
     Datenschutzerklärung,
     Robots,
     SiteSettings,
-    HomePage,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || 'payload-secret-placeholder',
