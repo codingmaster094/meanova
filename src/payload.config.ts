@@ -20,12 +20,39 @@ import { Pages } from './collections/Pages'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-const siteURL = (
-  process.env.BASE_DOAMAIN ||
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+function resolveSiteURL() {
+  if (process.env.NEXT_PUBLIC_SERVER_URL) {
+    return process.env.NEXT_PUBLIC_SERVER_URL.replace(/\/$/, '')
+  }
+
+  // Always use the current Vercel host so admin API calls stay same-origin.
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL.replace(/^https?:\/\//, '')}`
+  }
+
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL.replace(/^https?:\/\//, '')}`
+  }
+
+  return (process.env.BASE_DOAMAIN || 'http://localhost:3000').replace(/\/$/, '')
+}
+
+const siteURL = resolveSiteURL()
+
+const allowedOrigins = [
+  siteURL,
+  process.env.BASE_DOAMAIN,
+  process.env.NEXT_PUBLIC_SERVER_URL,
+  'https://meanova.vercel.app',
+  'https://mea-nova.vercel.app',
+  'http://localhost:3000',
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL.replace(/^https?:\/\//, '')}` : '',
+  process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL.replace(/^https?:\/\//, '')}`
-    : 'https://mea-nova.vercel.app')
-).replace(/\/$/, '')
+    : '',
+]
+  .filter(Boolean)
+  .map((origin) => origin.replace(/\/$/, ''))
 
 export default buildConfig({
   serverURL: siteURL,
@@ -35,13 +62,8 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  cors: [
-    siteURL,
-    'https://mea-nova.vercel.app',
-    'https://meanova.vercel.app',
-    'http://localhost:3000',
-    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '',
-  ].filter(Boolean),
+  cors: allowedOrigins,
+  csrf: allowedOrigins,
   collections: [Users, Media , Pages],
   globals: [
     Header,
@@ -60,8 +82,8 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || 'mongodb://127.0.0.1:27017/meanova',
     connectOptions: {
-      serverSelectionTimeoutMS: 3000,
-      connectTimeoutMS: 3000,
+      serverSelectionTimeoutMS: 10000,
+      connectTimeoutMS: 10000,
     },
   }),
   sharp,
