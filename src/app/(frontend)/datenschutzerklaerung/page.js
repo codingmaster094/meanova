@@ -1,6 +1,29 @@
 import React from "react";
+import { getGlobal } from '@/lib/cms'
+import generatePageMetadata from '../untils/generatePageMetadata'
 
-const page = () => {
+export const dynamic = 'force-dynamic'
+
+export async function generateMetadata() {
+  return generatePageMetadata('datenschutzerklaerung', {
+    title: 'Datenschutzerklärung',
+    description: 'Datenschutzerklärung der MeaNova GmbH',
+  })
+}
+
+export default async function page() {
+  const data = await getGlobal('datenschutzerklaerung')
+  if (data?.contents?.Gutenberg_html) {
+    return (
+      <div className="pagecontent">
+        <div className="container" dangerouslySetInnerHTML={{ __html: data.contents.Gutenberg_html }} />
+      </div>
+    )
+  }
+  return <StaticPrivacy />
+}
+
+const StaticPrivacy = () => {
   return (
     <div className="pagecontent">
       <div className="container">
@@ -407,5 +430,3 @@ const page = () => {
     </div>
   );
 }
-
-export default page;

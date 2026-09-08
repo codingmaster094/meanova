@@ -11,11 +11,11 @@ import { Media } from './collections/Media'
 import { Header } from './globals/Header/config'
 import { Footer } from './globals/Footer/config'
 import { menus } from './globals/menus/config'
-import { HomePage } from './globals/home/config'
 import { Impressum } from './globals/impressum/config'
 import { Datenschutzerklärung } from './globals/datenschutzerklärung/config'
 import { Robots } from './globals/robots/config'
 import { Pages } from './collections/Pages'
+import { SiteSettings } from './globals/SiteSettings/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -44,7 +44,6 @@ const allowedOrigins = [
   process.env.BASE_DOAMAIN,
   process.env.NEXT_PUBLIC_SERVER_URL,
   'https://meanova.vercel.app',
-  'https://mea-nova.vercel.app',
   'http://localhost:3000',
   process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL.replace(/^https?:\/\//, '')}` : '',
   process.env.VERCEL_PROJECT_PRODUCTION_URL
@@ -63,6 +62,9 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    meta: {
+      titleSuffix: '— MeaNova',
+    },
   },
   cors: allowedOrigins,
   csrf: allowedOrigins,
@@ -71,10 +73,10 @@ export default buildConfig({
     Header,
     Footer,
     menus,
-    HomePage,
     Impressum,
     Datenschutzerklärung,
     Robots,
+    SiteSettings,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || 'payload-secret-placeholder',

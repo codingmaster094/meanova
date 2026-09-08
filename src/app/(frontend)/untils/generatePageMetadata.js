@@ -1,20 +1,22 @@
 import Alldata from "./AllDataFatch";
+import { absoluteUrl } from "@/lib/siteURL";
+import { getPageBySlug } from '@/lib/cms';
 
 export default async function generatePageMetadata(params, fallback = {}) {
   try {
-    const data = await Alldata(params);
+    const data = params === "home" ? await getPageBySlug("home") : await Alldata(params);
     const seo = data?.seo || {};
 
-    // Use fallback if API data is missing
-    const title = seo?.meta?.title || fallback.title || "Default Title";
-    const description = seo?.meta?.description || fallback.description || "Default Description";
+    const title = seo?.meta?.title || fallback.title || "MeaNova";
+    const description = seo?.meta?.description || fallback.description || "";
 
-    const canonical = seo?.meta?.canonicalUrl || ``;
+    const canonical = seo?.meta?.canonicalUrl || absoluteUrl(params === "home" ? "/" : `/${params}`);
     
-    // Ensure the robots tag is always a valid string
     const indexing = seo?.meta?.indexing || "index";
     const following = seo?.meta?.following || "follow";
     const robots = `${indexing},${following}`;
+
+    const ogImage = seo?.meta?.image?.url;
 
     return {
       title,
@@ -24,24 +26,24 @@ export default async function generatePageMetadata(params, fallback = {}) {
       },
       robots,
       openGraph: {
-        type: "article",
+        type: "website",
         title: seo?.social?.facebook?.title || title,
         description: seo?.social?.facebook?.description || description,
         url: canonical,
+        images: ogImage ? [{ url: ogImage }] : undefined,
       },
-      // Adding Twitter meta for completeness
       twitter: {
         card: "summary_large_image",
         title: seo?.social?.twitter?.title || title,
         description: seo?.social?.twitter?.description || description,
+        images: ogImage ? [ogImage] : undefined,
       }
     };
   } catch (error) {
     console.error("Error in generatePageMetadata:", error);
-    // Return a solid fallback in case of API failure
     return {
-      title: fallback.title || "Error Title",
-      description: fallback.description || "Error Description: Could not load SEO data.",
+      title: fallback.title || "MeaNova",
+      description: fallback.description || "",
     };
   }
 }

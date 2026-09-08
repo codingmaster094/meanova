@@ -90,19 +90,19 @@ export interface Config {
     header: Header;
     footer: Footer;
     menus: Menu;
-    home: Home;
     impressum: Impressum;
     datenschutzerklaerung: Datenschutzerklaerung;
     robots: Robot;
+    'site-settings': SiteSetting;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     menus: MenusSelect<false> | MenusSelect<true>;
-    home: HomeSelect<false> | HomeSelect<true>;
     impressum: ImpressumSelect<false> | ImpressumSelect<true>;
     datenschutzerklaerung: DatenschutzerklaerungSelect<false> | DatenschutzerklaerungSelect<true>;
     robots: RobotsSelect<false> | RobotsSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -161,7 +161,8 @@ export interface User {
  */
 export interface Media {
   id: string;
-  alt: string;
+  alt?: string | null;
+  caption?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -175,6 +176,8 @@ export interface Media {
   focalY?: number | null;
 }
 /**
+ * Flexible pages built from reusable blocks, including the homepage.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
@@ -182,8 +185,549 @@ export interface Page {
   id: string;
   title: string;
   slug?: string | null;
+  layout?:
+    | (
+        | HeroBlock
+        | PersonalvermittlungBlock
+        | UnternehmenBlock
+        | OffeneStellenBlock
+        | FaqBlock
+        | ContactBlock
+        | RichContentBlock
+        | CtaBlock
+        | ImageBlock
+        | BannerBlock
+        | AccordionBlock
+        | SpacerBlock
+        | HtmlBlock
+      )[]
+    | null;
+  seo?: {
+    meta?: {
+      title?: string | null;
+      description?: string | null;
+      /**
+       * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+       */
+      image?: (string | null) | Media;
+      /**
+       * Enter your JSON-LD schema markup here. This is typically used for rich snippets.
+       */
+      schemaMarkup?: string | null;
+      indexing?: ('index' | 'noindex') | null;
+      following?: ('follow' | 'nofollow') | null;
+      canonicalUrl?: string | null;
+    };
+  };
+  publishedAt?: string | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock".
+ */
+export interface HeroBlock {
+  heroImage?: (string | null) | Media;
+  Heading?: string | null;
+  SubHeading?: string | null;
+  richText?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  hero_link?: {
+    label?: string | null;
+    url?: string | null;
+    target?: ('_self' | '_blank') | null;
+  };
+  /**
+   * Spacing, visibility and background for this block.
+   */
+  settings?: {
+    visible?: boolean | null;
+    /**
+     * Optional HTML id, e.g. kontakt
+     */
+    anchor?: string | null;
+    background?: ('default' | 'white' | 'muted' | 'dark') | null;
+    padding?: ('none' | 'sm' | 'md' | 'lg') | null;
+    align?: ('left' | 'center') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'hero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PersonalvermittlungBlock".
+ */
+export interface PersonalvermittlungBlock {
+  personalvermittlung_Image?: (string | null) | Media;
+  Heading?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Spacing, visibility and background for this block.
+   */
+  settings?: {
+    visible?: boolean | null;
+    /**
+     * Optional HTML id, e.g. kontakt
+     */
+    anchor?: string | null;
+    background?: ('default' | 'white' | 'muted' | 'dark') | null;
+    padding?: ('none' | 'sm' | 'md' | 'lg') | null;
+    align?: ('left' | 'center') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'personalvermittlung';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "UnternehmenBlock".
+ */
+export interface UnternehmenBlock {
+  unternehmenTab: {
+    /**
+     * Wird als klickbarer Tab angezeigt (z. B. Unternehmen oder Kandidat:innen).
+     */
+    tabLabel: string;
+    topHeading?: string | null;
+    topCards?:
+      | {
+          icon?: (string | null) | Media;
+          heading?: string | null;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    ctaHeading?: string | null;
+    ctaText?: string | null;
+    ctaLink?: {
+      label?: string | null;
+      /**
+       * z. B. #kontakt oder /#kontakt
+       */
+      url?: string | null;
+      target?: ('_self' | '_blank') | null;
+    };
+    bottomHeading?: string | null;
+    bottomCards?:
+      | {
+          icon?: (string | null) | Media;
+          heading?: string | null;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  kandidatenTab: {
+    /**
+     * Wird als klickbarer Tab angezeigt (z. B. Unternehmen oder Kandidat:innen).
+     */
+    tabLabel: string;
+    topHeading?: string | null;
+    topCards?:
+      | {
+          icon?: (string | null) | Media;
+          heading?: string | null;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    ctaHeading?: string | null;
+    ctaText?: string | null;
+    ctaLink?: {
+      label?: string | null;
+      /**
+       * z. B. #kontakt oder /#kontakt
+       */
+      url?: string | null;
+      target?: ('_self' | '_blank') | null;
+    };
+    bottomHeading?: string | null;
+    bottomCards?:
+      | {
+          icon?: (string | null) | Media;
+          heading?: string | null;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Spacing, visibility and background for this block.
+   */
+  settings?: {
+    visible?: boolean | null;
+    /**
+     * Optional HTML id, e.g. kontakt
+     */
+    anchor?: string | null;
+    background?: ('default' | 'white' | 'muted' | 'dark') | null;
+    padding?: ('none' | 'sm' | 'md' | 'lg') | null;
+    align?: ('left' | 'center') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'unternehmen';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "OffeneStellenBlock".
+ */
+export interface OffeneStellenBlock {
+  offeneStellenImage?: (string | null) | Media;
+  heading?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  offeneStellen_link?: {
+    label?: string | null;
+    url?: string | null;
+    target?: ('_self' | '_blank') | null;
+  };
+  /**
+   * Spacing, visibility and background for this block.
+   */
+  settings?: {
+    visible?: boolean | null;
+    /**
+     * Optional HTML id, e.g. kontakt
+     */
+    anchor?: string | null;
+    background?: ('default' | 'white' | 'muted' | 'dark') | null;
+    padding?: ('none' | 'sm' | 'md' | 'lg') | null;
+    align?: ('left' | 'center') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'offeneStellen';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqBlock".
+ */
+export interface FaqBlock {
+  enableFAQ?: boolean | null;
+  Heading?: string | null;
+  FaqContent?:
+    | {
+        title?: string | null;
+        richText?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Spacing, visibility and background for this block.
+   */
+  settings?: {
+    visible?: boolean | null;
+    /**
+     * Optional HTML id, e.g. kontakt
+     */
+    anchor?: string | null;
+    background?: ('default' | 'white' | 'muted' | 'dark') | null;
+    padding?: ('none' | 'sm' | 'md' | 'lg') | null;
+    align?: ('left' | 'center') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'faq';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactBlock".
+ */
+export interface ContactBlock {
+  Heading?: string | null;
+  SubHeading?: string | null;
+  FormHeading?: string | null;
+  DatenschutzerklarungLink?: {
+    label?: string | null;
+    url?: string | null;
+    target?: ('_self' | '_blank') | null;
+  };
+  sumbimtedButtonLabel?: string | null;
+  /**
+   * Spacing, visibility and background for this block.
+   */
+  settings?: {
+    visible?: boolean | null;
+    /**
+     * Optional HTML id, e.g. kontakt
+     */
+    anchor?: string | null;
+    background?: ('default' | 'white' | 'muted' | 'dark') | null;
+    padding?: ('none' | 'sm' | 'md' | 'lg') | null;
+    align?: ('left' | 'center') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contact';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichContentBlock".
+ */
+export interface RichContentBlock {
+  Gutenberg?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  Gutenberg_html?: string | null;
+  Featured_image?: (string | null) | Media;
+  type?: ('none' | 'highImpact' | 'mediumImpact' | 'lowImpact') | null;
+  media?: (string | null) | Media;
+  /**
+   * Spacing, visibility and background for this block.
+   */
+  settings?: {
+    visible?: boolean | null;
+    /**
+     * Optional HTML id, e.g. kontakt
+     */
+    anchor?: string | null;
+    background?: ('default' | 'white' | 'muted' | 'dark') | null;
+    padding?: ('none' | 'sm' | 'md' | 'lg') | null;
+    align?: ('left' | 'center') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'richContent';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CtaBlock".
+ */
+export interface CtaBlock {
+  heading?: string | null;
+  text?: string | null;
+  button?: {
+    label?: string | null;
+    url?: string | null;
+    target?: ('_self' | '_blank') | null;
+  };
+  /**
+   * Spacing, visibility and background for this block.
+   */
+  settings?: {
+    visible?: boolean | null;
+    /**
+     * Optional HTML id, e.g. kontakt
+     */
+    anchor?: string | null;
+    background?: ('default' | 'white' | 'muted' | 'dark') | null;
+    padding?: ('none' | 'sm' | 'md' | 'lg') | null;
+    align?: ('left' | 'center') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cta';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ImageBlock".
+ */
+export interface ImageBlock {
+  image: string | Media;
+  caption?: string | null;
+  /**
+   * Spacing, visibility and background for this block.
+   */
+  settings?: {
+    visible?: boolean | null;
+    /**
+     * Optional HTML id, e.g. kontakt
+     */
+    anchor?: string | null;
+    background?: ('default' | 'white' | 'muted' | 'dark') | null;
+    padding?: ('none' | 'sm' | 'md' | 'lg') | null;
+    align?: ('left' | 'center') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'image';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BannerBlock".
+ */
+export interface BannerBlock {
+  text: string;
+  link?: {
+    label?: string | null;
+    url?: string | null;
+    target?: ('_self' | '_blank') | null;
+  };
+  /**
+   * Spacing, visibility and background for this block.
+   */
+  settings?: {
+    visible?: boolean | null;
+    /**
+     * Optional HTML id, e.g. kontakt
+     */
+    anchor?: string | null;
+    background?: ('default' | 'white' | 'muted' | 'dark') | null;
+    padding?: ('none' | 'sm' | 'md' | 'lg') | null;
+    align?: ('left' | 'center') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'banner';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AccordionBlock".
+ */
+export interface AccordionBlock {
+  heading?: string | null;
+  items?:
+    | {
+        title: string;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Spacing, visibility and background for this block.
+   */
+  settings?: {
+    visible?: boolean | null;
+    /**
+     * Optional HTML id, e.g. kontakt
+     */
+    anchor?: string | null;
+    background?: ('default' | 'white' | 'muted' | 'dark') | null;
+    padding?: ('none' | 'sm' | 'md' | 'lg') | null;
+    align?: ('left' | 'center') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'accordion';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SpacerBlock".
+ */
+export interface SpacerBlock {
+  size?: ('sm' | 'md' | 'lg') | null;
+  /**
+   * Spacing, visibility and background for this block.
+   */
+  settings?: {
+    visible?: boolean | null;
+    /**
+     * Optional HTML id, e.g. kontakt
+     */
+    anchor?: string | null;
+    background?: ('default' | 'white' | 'muted' | 'dark') | null;
+    padding?: ('none' | 'sm' | 'md' | 'lg') | null;
+    align?: ('left' | 'center') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'spacer';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HtmlBlock".
+ */
+export interface HtmlBlock {
+  html?: string | null;
+  /**
+   * Spacing, visibility and background for this block.
+   */
+  settings?: {
+    visible?: boolean | null;
+    /**
+     * Optional HTML id, e.g. kontakt
+     */
+    anchor?: string | null;
+    background?: ('default' | 'white' | 'muted' | 'dark') | null;
+    padding?: ('none' | 'sm' | 'md' | 'lg') | null;
+    align?: ('left' | 'center') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'html';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -274,6 +818,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  caption?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -293,8 +838,404 @@ export interface MediaSelect<T extends boolean = true> {
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        personalvermittlung?: T | PersonalvermittlungBlockSelect<T>;
+        unternehmen?: T | UnternehmenBlockSelect<T>;
+        offeneStellen?: T | OffeneStellenBlockSelect<T>;
+        faq?: T | FaqBlockSelect<T>;
+        contact?: T | ContactBlockSelect<T>;
+        richContent?: T | RichContentBlockSelect<T>;
+        cta?: T | CtaBlockSelect<T>;
+        image?: T | ImageBlockSelect<T>;
+        banner?: T | BannerBlockSelect<T>;
+        accordion?: T | AccordionBlockSelect<T>;
+        spacer?: T | SpacerBlockSelect<T>;
+        html?: T | HtmlBlockSelect<T>;
+      };
+  seo?:
+    | T
+    | {
+        meta?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              image?: T;
+              schemaMarkup?: T;
+              indexing?: T;
+              following?: T;
+              canonicalUrl?: T;
+            };
+      };
+  publishedAt?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock_select".
+ */
+export interface HeroBlockSelect<T extends boolean = true> {
+  heroImage?: T;
+  Heading?: T;
+  SubHeading?: T;
+  richText?: T;
+  hero_link?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        target?: T;
+      };
+  settings?:
+    | T
+    | {
+        visible?: T;
+        anchor?: T;
+        background?: T;
+        padding?: T;
+        align?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PersonalvermittlungBlock_select".
+ */
+export interface PersonalvermittlungBlockSelect<T extends boolean = true> {
+  personalvermittlung_Image?: T;
+  Heading?: T;
+  description?: T;
+  settings?:
+    | T
+    | {
+        visible?: T;
+        anchor?: T;
+        background?: T;
+        padding?: T;
+        align?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "UnternehmenBlock_select".
+ */
+export interface UnternehmenBlockSelect<T extends boolean = true> {
+  unternehmenTab?:
+    | T
+    | {
+        tabLabel?: T;
+        topHeading?: T;
+        topCards?:
+          | T
+          | {
+              icon?: T;
+              heading?: T;
+              text?: T;
+              id?: T;
+            };
+        ctaHeading?: T;
+        ctaText?: T;
+        ctaLink?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              target?: T;
+            };
+        bottomHeading?: T;
+        bottomCards?:
+          | T
+          | {
+              icon?: T;
+              heading?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  kandidatenTab?:
+    | T
+    | {
+        tabLabel?: T;
+        topHeading?: T;
+        topCards?:
+          | T
+          | {
+              icon?: T;
+              heading?: T;
+              text?: T;
+              id?: T;
+            };
+        ctaHeading?: T;
+        ctaText?: T;
+        ctaLink?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              target?: T;
+            };
+        bottomHeading?: T;
+        bottomCards?:
+          | T
+          | {
+              icon?: T;
+              heading?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  settings?:
+    | T
+    | {
+        visible?: T;
+        anchor?: T;
+        background?: T;
+        padding?: T;
+        align?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "OffeneStellenBlock_select".
+ */
+export interface OffeneStellenBlockSelect<T extends boolean = true> {
+  offeneStellenImage?: T;
+  heading?: T;
+  description?: T;
+  offeneStellen_link?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        target?: T;
+      };
+  settings?:
+    | T
+    | {
+        visible?: T;
+        anchor?: T;
+        background?: T;
+        padding?: T;
+        align?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqBlock_select".
+ */
+export interface FaqBlockSelect<T extends boolean = true> {
+  enableFAQ?: T;
+  Heading?: T;
+  FaqContent?:
+    | T
+    | {
+        title?: T;
+        richText?: T;
+        id?: T;
+      };
+  settings?:
+    | T
+    | {
+        visible?: T;
+        anchor?: T;
+        background?: T;
+        padding?: T;
+        align?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactBlock_select".
+ */
+export interface ContactBlockSelect<T extends boolean = true> {
+  Heading?: T;
+  SubHeading?: T;
+  FormHeading?: T;
+  DatenschutzerklarungLink?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        target?: T;
+      };
+  sumbimtedButtonLabel?: T;
+  settings?:
+    | T
+    | {
+        visible?: T;
+        anchor?: T;
+        background?: T;
+        padding?: T;
+        align?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichContentBlock_select".
+ */
+export interface RichContentBlockSelect<T extends boolean = true> {
+  Gutenberg?: T;
+  Gutenberg_html?: T;
+  Featured_image?: T;
+  type?: T;
+  media?: T;
+  settings?:
+    | T
+    | {
+        visible?: T;
+        anchor?: T;
+        background?: T;
+        padding?: T;
+        align?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CtaBlock_select".
+ */
+export interface CtaBlockSelect<T extends boolean = true> {
+  heading?: T;
+  text?: T;
+  button?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        target?: T;
+      };
+  settings?:
+    | T
+    | {
+        visible?: T;
+        anchor?: T;
+        background?: T;
+        padding?: T;
+        align?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ImageBlock_select".
+ */
+export interface ImageBlockSelect<T extends boolean = true> {
+  image?: T;
+  caption?: T;
+  settings?:
+    | T
+    | {
+        visible?: T;
+        anchor?: T;
+        background?: T;
+        padding?: T;
+        align?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BannerBlock_select".
+ */
+export interface BannerBlockSelect<T extends boolean = true> {
+  text?: T;
+  link?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        target?: T;
+      };
+  settings?:
+    | T
+    | {
+        visible?: T;
+        anchor?: T;
+        background?: T;
+        padding?: T;
+        align?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AccordionBlock_select".
+ */
+export interface AccordionBlockSelect<T extends boolean = true> {
+  heading?: T;
+  items?:
+    | T
+    | {
+        title?: T;
+        content?: T;
+        id?: T;
+      };
+  settings?:
+    | T
+    | {
+        visible?: T;
+        anchor?: T;
+        background?: T;
+        padding?: T;
+        align?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SpacerBlock_select".
+ */
+export interface SpacerBlockSelect<T extends boolean = true> {
+  size?: T;
+  settings?:
+    | T
+    | {
+        visible?: T;
+        anchor?: T;
+        background?: T;
+        padding?: T;
+        align?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HtmlBlock_select".
+ */
+export interface HtmlBlockSelect<T extends boolean = true> {
+  html?: T;
+  settings?:
+    | T
+    | {
+        visible?: T;
+        anchor?: T;
+        background?: T;
+        padding?: T;
+        align?: T;
+      };
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -440,210 +1381,6 @@ export interface Menu {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "home".
- */
-export interface Home {
-  id: string;
-  title?: string | null;
-  author?: (string | null) | User;
-  slug: string;
-  hero?: {
-    heroImage?: (string | null) | Media;
-    Heading?: string | null;
-    SubHeading?: string | null;
-    richText?: {
-      root: {
-        type: string;
-        children: {
-          type: any;
-          version: number;
-          [k: string]: unknown;
-        }[];
-        direction: ('ltr' | 'rtl') | null;
-        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-        indent: number;
-        version: number;
-      };
-      [k: string]: unknown;
-    } | null;
-    hero_link?: {
-      label?: string | null;
-      url?: string | null;
-      target?: ('_self' | '_blank') | null;
-    };
-  };
-  personalvermittlung?: {
-    personalvermittlung_Image?: (string | null) | Media;
-    Heading?: string | null;
-    description?: {
-      root: {
-        type: string;
-        children: {
-          type: any;
-          version: number;
-          [k: string]: unknown;
-        }[];
-        direction: ('ltr' | 'rtl') | null;
-        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-        indent: number;
-        version: number;
-      };
-      [k: string]: unknown;
-    } | null;
-  };
-  unternehmen: {
-    unternehmenTab: {
-      /**
-       * Wird als klickbarer Tab angezeigt (z. B. Unternehmen oder Kandidat:innen).
-       */
-      tabLabel: string;
-      topHeading?: string | null;
-      topCards?:
-        | {
-            icon?: (string | null) | Media;
-            heading?: string | null;
-            text?: string | null;
-            id?: string | null;
-          }[]
-        | null;
-      ctaHeading?: string | null;
-      ctaText?: string | null;
-      ctaLink?: {
-        label?: string | null;
-        /**
-         * z. B. #kontakt oder /#kontakt
-         */
-        url?: string | null;
-        target?: ('_self' | '_blank') | null;
-      };
-      bottomHeading?: string | null;
-      bottomCards?:
-        | {
-            icon?: (string | null) | Media;
-            heading?: string | null;
-            text?: string | null;
-            id?: string | null;
-          }[]
-        | null;
-    };
-    kandidatenTab: {
-      /**
-       * Wird als klickbarer Tab angezeigt (z. B. Unternehmen oder Kandidat:innen).
-       */
-      tabLabel: string;
-      topHeading?: string | null;
-      topCards?:
-        | {
-            icon?: (string | null) | Media;
-            heading?: string | null;
-            text?: string | null;
-            id?: string | null;
-          }[]
-        | null;
-      ctaHeading?: string | null;
-      ctaText?: string | null;
-      ctaLink?: {
-        label?: string | null;
-        /**
-         * z. B. #kontakt oder /#kontakt
-         */
-        url?: string | null;
-        target?: ('_self' | '_blank') | null;
-      };
-      bottomHeading?: string | null;
-      bottomCards?:
-        | {
-            icon?: (string | null) | Media;
-            heading?: string | null;
-            text?: string | null;
-            id?: string | null;
-          }[]
-        | null;
-    };
-  };
-  offeneStellen?: {
-    offeneStellenImage?: (string | null) | Media;
-    heading?: string | null;
-    description?: {
-      root: {
-        type: string;
-        children: {
-          type: any;
-          version: number;
-          [k: string]: unknown;
-        }[];
-        direction: ('ltr' | 'rtl') | null;
-        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-        indent: number;
-        version: number;
-      };
-      [k: string]: unknown;
-    } | null;
-    offeneStellen_link?: {
-      label?: string | null;
-      url?: string | null;
-      target?: ('_self' | '_blank') | null;
-    };
-  };
-  FaqSection?: {
-    enableFAQ?: boolean | null;
-    Heading?: string | null;
-    FaqContent?:
-      | {
-          title?: string | null;
-          richText?: {
-            root: {
-              type: string;
-              children: {
-                type: any;
-                version: number;
-                [k: string]: unknown;
-              }[];
-              direction: ('ltr' | 'rtl') | null;
-              format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-              indent: number;
-              version: number;
-            };
-            [k: string]: unknown;
-          } | null;
-          id?: string | null;
-        }[]
-      | null;
-  };
-  kontakt?: {
-    Heading?: string | null;
-    SubHeading?: string | null;
-    FormHeading?: string | null;
-    DatenschutzerklarungLink?: {
-      label?: string | null;
-      url?: string | null;
-      target?: ('_self' | '_blank') | null;
-    };
-    sumbimtedButtonLabel?: string | null;
-  };
-  seo?: {
-    meta?: {
-      title?: string | null;
-      description?: string | null;
-      /**
-       * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-       */
-      image?: (string | null) | Media;
-      /**
-       * Enter your JSON-LD schema markup here. This is typically used for rich snippets.
-       */
-      schemaMarkup?: string | null;
-      indexing?: ('index' | 'noindex') | null;
-      following?: ('follow' | 'nofollow') | null;
-      canonicalUrl?: string | null;
-    };
-  };
-  publishedAt?: string | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "impressum".
  */
 export interface Impressum {
@@ -749,6 +1486,37 @@ export interface Datenschutzerklaerung {
 export interface Robot {
   id: string;
   robots?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: string;
+  siteName?: string | null;
+  tagline?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  seo?: {
+    meta?: {
+      title?: string | null;
+      description?: string | null;
+      /**
+       * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+       */
+      image?: (string | null) | Media;
+      /**
+       * Enter your JSON-LD schema markup here. This is typically used for rich snippets.
+       */
+      schemaMarkup?: string | null;
+      indexing?: ('index' | 'noindex') | null;
+      following?: ('follow' | 'nofollow') | null;
+      canonicalUrl?: string | null;
+    };
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -872,166 +1640,6 @@ export interface MenusSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "home_select".
- */
-export interface HomeSelect<T extends boolean = true> {
-  title?: T;
-  author?: T;
-  slug?: T;
-  hero?:
-    | T
-    | {
-        heroImage?: T;
-        Heading?: T;
-        SubHeading?: T;
-        richText?: T;
-        hero_link?:
-          | T
-          | {
-              label?: T;
-              url?: T;
-              target?: T;
-            };
-      };
-  personalvermittlung?:
-    | T
-    | {
-        personalvermittlung_Image?: T;
-        Heading?: T;
-        description?: T;
-      };
-  unternehmen?:
-    | T
-    | {
-        unternehmenTab?:
-          | T
-          | {
-              tabLabel?: T;
-              topHeading?: T;
-              topCards?:
-                | T
-                | {
-                    icon?: T;
-                    heading?: T;
-                    text?: T;
-                    id?: T;
-                  };
-              ctaHeading?: T;
-              ctaText?: T;
-              ctaLink?:
-                | T
-                | {
-                    label?: T;
-                    url?: T;
-                    target?: T;
-                  };
-              bottomHeading?: T;
-              bottomCards?:
-                | T
-                | {
-                    icon?: T;
-                    heading?: T;
-                    text?: T;
-                    id?: T;
-                  };
-            };
-        kandidatenTab?:
-          | T
-          | {
-              tabLabel?: T;
-              topHeading?: T;
-              topCards?:
-                | T
-                | {
-                    icon?: T;
-                    heading?: T;
-                    text?: T;
-                    id?: T;
-                  };
-              ctaHeading?: T;
-              ctaText?: T;
-              ctaLink?:
-                | T
-                | {
-                    label?: T;
-                    url?: T;
-                    target?: T;
-                  };
-              bottomHeading?: T;
-              bottomCards?:
-                | T
-                | {
-                    icon?: T;
-                    heading?: T;
-                    text?: T;
-                    id?: T;
-                  };
-            };
-      };
-  offeneStellen?:
-    | T
-    | {
-        offeneStellenImage?: T;
-        heading?: T;
-        description?: T;
-        offeneStellen_link?:
-          | T
-          | {
-              label?: T;
-              url?: T;
-              target?: T;
-            };
-      };
-  FaqSection?:
-    | T
-    | {
-        enableFAQ?: T;
-        Heading?: T;
-        FaqContent?:
-          | T
-          | {
-              title?: T;
-              richText?: T;
-              id?: T;
-            };
-      };
-  kontakt?:
-    | T
-    | {
-        Heading?: T;
-        SubHeading?: T;
-        FormHeading?: T;
-        DatenschutzerklarungLink?:
-          | T
-          | {
-              label?: T;
-              url?: T;
-              target?: T;
-            };
-        sumbimtedButtonLabel?: T;
-      };
-  seo?:
-    | T
-    | {
-        meta?:
-          | T
-          | {
-              title?: T;
-              description?: T;
-              image?: T;
-              schemaMarkup?: T;
-              indexing?: T;
-              following?: T;
-              canonicalUrl?: T;
-            };
-      };
-  publishedAt?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "impressum_select".
  */
 export interface ImpressumSelect<T extends boolean = true> {
@@ -1108,6 +1716,35 @@ export interface DatenschutzerklaerungSelect<T extends boolean = true> {
  */
 export interface RobotsSelect<T extends boolean = true> {
   robots?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  siteName?: T;
+  tagline?: T;
+  email?: T;
+  phone?: T;
+  address?: T;
+  seo?:
+    | T
+    | {
+        meta?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              image?: T;
+              schemaMarkup?: T;
+              indexing?: T;
+              following?: T;
+              canonicalUrl?: T;
+            };
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
