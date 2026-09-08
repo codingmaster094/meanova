@@ -51,7 +51,7 @@ const allowedOrigins = [
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL.replace(/^https?:\/\//, '')}`
     : '',
 ]
-  .filter(Boolean)
+  .filter((origin): origin is string => Boolean(origin))
   .map((origin) => origin.replace(/\/$/, ''))
 
 export default buildConfig({
