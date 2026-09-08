@@ -55,7 +55,9 @@ const allowedOrigins = [
   .map((origin) => origin.replace(/\/$/, ''))
 
 export default buildConfig({
-  serverURL: siteURL,
+  // Empty = same-origin `/api` calls. A hardcoded Vercel URL causes "Failed to fetch"
+  // when the admin is opened on a different alias (meanova vs mea-nova).
+  serverURL: '',
   admin: {
     user: Users.slug,
     importMap: {
@@ -86,7 +88,6 @@ export default buildConfig({
       connectTimeoutMS: 10000,
     },
   }),
-  sharp,
   plugins: [
      vercelBlobStorage({
       enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
@@ -96,5 +97,6 @@ export default buildConfig({
       token: process.env.BLOB_READ_WRITE_TOKEN,
     }),
   ],
+  ...(process.env.VERCEL ? {} : { sharp }),
 })
 
