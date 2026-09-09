@@ -3,12 +3,11 @@
 import React from 'react'
 import Link from 'next/link'
 import { useShop } from '@/context/ShopContext'
-import { brandConfig } from '@/lib/brand'
 
 export default function CartPage() {
-  const { cart, removeFromCart, updateQuantity, clearCart, cartSubtotal } = useShop()
+  const { cart, removeFromCart, updateQuantity, clearCart, cartSubtotal, brand } = useShop()
 
-  const freeShippingThreshold = brandConfig.policies.freeShippingThreshold
+  const freeShippingThreshold = brand.policies.freeShippingThreshold
   const shippingFee = cartSubtotal >= freeShippingThreshold || cartSubtotal === 0 ? 0 : 25
   const estimatedTax = cartSubtotal * 0.08
   const grandTotal = cartSubtotal + shippingFee + estimatedTax

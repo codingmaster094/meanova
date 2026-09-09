@@ -1,7 +1,9 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { ProductItem, PRODUCTS } from '@/lib/seedData'
+import { CategoryItem, CollectionItem, ProductItem, PRODUCTS } from '@/lib/seedData'
+import { brandConfig } from '@/lib/brand'
+import type { BrandConfig } from '@/lib/mapCms'
 
 export interface CartItem {
   product: ProductItem
@@ -10,6 +12,10 @@ export interface CartItem {
 }
 
 interface ShopContextType {
+  products: ProductItem[]
+  categories: CategoryItem[]
+  collections: CollectionItem[]
+  brand: BrandConfig
   // Cart
   cart: CartItem[]
   addToCart: (product: ProductItem, quantity?: number, selectedColor?: string) => void
@@ -46,7 +52,19 @@ interface ShopContextType {
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined)
 
-export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ShopProvider: React.FC<{
+  children: React.ReactNode
+  products?: ProductItem[]
+  categories?: CategoryItem[]
+  collections?: CollectionItem[]
+  brand?: BrandConfig
+}> = ({
+  children,
+  products = PRODUCTS,
+  categories = [],
+  collections = [],
+  brand = brandConfig,
+}) => {
   const [cart, setCart] = useState<CartItem[]>([])
   const [wishlist, setWishlist] = useState<string[]>([])
   const [compareList, setCompareList] = useState<string[]>([])
@@ -137,7 +155,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const toggleWishlist = (productId: string) => {
     setWishlist((prev) => {
       const exists = prev.includes(productId)
-      const targetProduct = PRODUCTS.find((p) => p.id === productId)
+      const targetProduct = products.find((p) => p.id === productId)
       const name = targetProduct?.name || 'Product'
 
       if (exists) {
@@ -155,7 +173,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const toggleCompare = (productId: string) => {
     setCompareList((prev) => {
       const exists = prev.includes(productId)
-      const targetProduct = PRODUCTS.find((p) => p.id === productId)
+      const targetProduct = products.find((p) => p.id === productId)
       const name = targetProduct?.name || 'Product'
 
       if (exists) {
@@ -185,6 +203,10 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   return (
     <ShopContext.Provider
       value={{
+        products,
+        categories,
+        collections,
+        brand,
         cart,
         addToCart,
         removeFromCart,

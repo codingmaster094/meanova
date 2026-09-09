@@ -41,6 +41,11 @@ export const ProductCollections: CollectionConfig = {
       relationTo: 'media',
     },
     {
+      name: 'imageUrl',
+      type: 'text',
+      label: { en: 'Image URL (fallback)', de: 'Bild-URL (Fallback)' },
+    },
+    {
       name: 'products',
       type: 'relationship',
       relationTo: 'products',

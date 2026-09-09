@@ -3,11 +3,12 @@
 import React, { use } from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { CATEGORIES, PRODUCTS } from '@/lib/seedData'
 import ProductCard from '../../components/ProductCard'
+import { useShop } from '@/context/ShopContext'
 
 export default function CategoryDetailPage({ params }) {
   const resolvedParams = use(params)
+  const { categories: CATEGORIES, products: PRODUCTS } = useShop()
   const category = CATEGORIES.find((c) => c.slug === resolvedParams.slug)
 
   if (!category) {

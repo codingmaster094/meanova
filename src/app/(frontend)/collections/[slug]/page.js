@@ -3,11 +3,12 @@
 import React, { use } from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { COLLECTIONS, PRODUCTS } from '@/lib/seedData'
 import ProductCard from '../../components/ProductCard'
+import { useShop } from '@/context/ShopContext'
 
 export default function CollectionDetailPage({ params }) {
   const resolvedParams = use(params)
+  const { collections: COLLECTIONS, products: PRODUCTS } = useShop()
   const collection = COLLECTIONS.find((c) => c.slug === resolvedParams.slug)
 
   if (!collection) {

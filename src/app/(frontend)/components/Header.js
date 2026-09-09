@@ -1,297 +1,195 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { brandConfig } from "@/lib/brand";
-import { useShop } from "@/context/ShopContext";
-import { PRODUCTS } from "@/lib/seedData";
+import OffCanvas from "./OffCanvas";
+import { usePathname } from "next/navigation";
 
-export default function Header() {
+const Header = ({ HeaderData, MenusData }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
-  const { cartTotalCount, wishlistCount, setIsCartOpen } = useShop();
-
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const searchInputRef = useRef(null);
+  const lenisRef = useRef(null);
+  const logo = HeaderData?.Header_Logo;
+  const logoUrl = typeof logo === "object" && logo?.url ? logo.url : null;
+  const logoAlt = (typeof logo === "object" && logo?.alt) || "MeaNova";
+  const cta = HeaderData?.link;
+  const ctaUrl = cta?.url || "/";
+  const menus = MenusData?.menus ?? [];
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+    let cancelled = false;
+    let scroller;
+
+    import("@studio-freight/lenis")
+      .then(({ default: Lenis }) => {
+        if (cancelled) return;
+        scroller = new Lenis({
+          duration: 1.2,
+          easing: (t) => 1 - Math.pow(1 - t, 3),
+          smoothWheel: true,
+          smoothTouch: false,
+        });
+
+        function raf(time) {
+          scroller.raf(time);
+          requestAnimationFrame(raf);
+        }
+
+        requestAnimationFrame(raf);
+        lenisRef.current = scroller;
+      })
+      .catch((error) => {
+        console.error("Lenis failed to load:", error);
+      });
+
+    return () => {
+      cancelled = true;
+      scroller?.destroy();
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    if (searchOpen && searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  }, [searchOpen]);
-
-  const handleSearchSubmit = (e) => {
+  // ✅ Smooth scroll handler for internal section links
+  const handleSmoothScroll = (e, targetId) => {
+    if (pathname !== "/") return;
     e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchOpen(false);
-      setSearchQuery("");
+    const targetEl = document.querySelector(targetId);
+    if (targetEl && lenisRef.current) {
+      lenisRef.current.scrollTo(targetEl, {
+        offset: -80, // adjust for sticky header height
+        duration: 1.2,
+      });
     }
+    setIsOpen(false); // close off-canvas if open
   };
-
-  const searchResults = searchQuery.trim()
-    ? PRODUCTS.filter(
-        (p) =>
-          p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.categoryName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.materials.some((m) => m.toLowerCase().includes(searchQuery.toLowerCase()))
-      ).slice(0, 5)
-    : [];
-
-  const navLinks = [
-    { label: "Home", href: "/" },
-    { label: "Chairs", href: "/chairs" },
-    { label: "Categories", href: "/categories" },
-    { label: "Collections", href: "/collections" },
-    { label: "About", href: "/about" },
-    { label: "Contact", href: "/contact" },
-  ];
 
   return (
     <>
-      {/* Top Banner */}
-      <div className="bg-neutral-900 text-neutral-300 text-xs py-2 px-4 text-center font-medium tracking-wide flex justify-center items-center gap-3">
-        <span>Exclusive Seating Innovation</span>
-        <span className="hidden sm:inline text-neutral-600">•</span>
-        <span className="hidden sm:inline">Free Delivery on Orders Over ${brandConfig.policies.freeShippingThreshold}</span>
-        <span className="hidden md:inline text-neutral-600">•</span>
-        <span className="hidden md:inline text-amber-400 font-semibold">{brandConfig.policies.warrantyYears}-Year Frame Warranty</span>
-      </div>
-
-      {/* Main Sticky Header */}
-      <header
-        className={`sticky top-0 z-40 transition-all duration-300 ${
-          isScrolled
-            ? "bg-white/95 backdrop-blur-md shadow-sm py-4 border-b border-neutral-100"
-            : "bg-white py-6 border-b border-neutral-100"
-        }`}
-      >
-        <div className="container flex items-center justify-between">
-          {/* Mobile Menu Trigger */}
-          <button
-            onClick={() => setMobileMenuOpen(true)}
-            className="lg:hidden p-3 text-neutral-800 hover:text-neutral-950 rounded-xl hover:bg-neutral-100 transition min-h-[44px] min-w-[44px] flex items-center justify-center"
-            aria-label="Open navigation menu"
-          >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-
-          {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-neutral-950 text-white font-extrabold flex items-center justify-center rounded-2xl tracking-tighter text-xl shadow-md group-hover:scale-105 transition-transform font-outfit">
-              M
-            </div>
-            <div className="flex flex-col">
-              <span className="font-outfit font-black text-xl sm:text-2xl tracking-tight text-neutral-950 leading-none">
-                {brandConfig.logoText}
-              </span>
-              <span className="text-[9px] uppercase font-bold tracking-[0.3em] text-neutral-400 mt-1">
-                {brandConfig.logoSubtext}
-              </span>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-10">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`text-sm font-semibold tracking-wide transition-colors relative py-1.5 ${
-                    isActive ? "text-neutral-950 font-bold" : "text-neutral-500 hover:text-neutral-950"
-                  }`}
-                >
-                  {link.label}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-neutral-950 rounded-full" />
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* Utility Actions */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Search Button */}
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="p-3 text-neutral-700 hover:text-neutral-950 transition rounded-xl hover:bg-neutral-100 min-h-[44px] min-w-[44px] flex items-center justify-center"
-              aria-label="Search chairs"
-              title="Search"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
-
-            {/* Wishlist Icon */}
-            <Link
-              href="/wishlist"
-              className="relative p-3 text-neutral-700 hover:text-neutral-950 transition rounded-xl hover:bg-neutral-100 min-h-[44px] min-w-[44px] flex items-center justify-center"
-              aria-label="Wishlist"
-              title="Wishlist"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.684a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-              {wishlistCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 bg-rose-600 text-white text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center shadow-sm">
-                  {wishlistCount}
-                </span>
+      <header className="py-31 sticky top-0 bg-white z-[99]">
+        <div className="container">
+          <div className="flex justify-between items-center gap-50">
+            <Link href="/" aria-roledescription="link">
+              {logoUrl ? (
+                <Image
+                  className="w-100 xl:w-135"
+                  src={logoUrl}
+                  alt={logoAlt}
+                  role="img"
+                  width={200}
+                  height={60}
+                  fetchPriority="high"
+                />
+              ) : (
+                <span className="font-jakarta font-medium text-primary">MeaNova</span>
               )}
             </Link>
 
-            {/* Cart Trigger */}
-            <button
-              onClick={() => setIsCartOpen(true)}
-              className="relative p-3 text-neutral-700 hover:text-neutral-950 transition rounded-xl hover:bg-neutral-100 min-h-[44px] min-w-[44px] flex items-center justify-center"
-              aria-label="Cart"
-              title="Cart"
+            <nav
+              id="menu"
+              className="xl:block hidden"
+              role="navigation"
+              aria-label="menü"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-              {cartTotalCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 bg-neutral-950 text-white text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center shadow-sm">
-                  {cartTotalCount}
-                </span>
-              )}
-            </button>
+              <ul className="flex justify-center items-center gap-48 [&_li>a]:text-primary [&_li>a]:font-outfit [&_li>a]:text-base font-light">
+                {menus.map((menu, index) => {
+                  const menuUrl = menu.link?.url || "/";
+                  const isAnchor = menuUrl.startsWith("#"); // detect section links
+                  const isActive =
+                    pathname === menuUrl ||
+                    (menuUrl !== "/" && pathname.startsWith(menuUrl));
 
-            {/* Account Link */}
-            <Link
-              href="/account"
-              className="hidden sm:flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-neutral-900 border border-neutral-200 px-4 py-2.5 rounded-2xl hover:bg-neutral-950 hover:text-white transition shadow-xs"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-              <span>Account</span>
-            </Link>
+                  return (
+                    <li key={index}>
+                      {isAnchor ? (
+                        <a
+                          href={pathname !== "/" ? `/${menuUrl}` : menuUrl}
+                          onClick={(e) => handleSmoothScroll(e, menuUrl)}
+                          className={`${
+                            isActive ? "active" : "text-primary"
+                          } transition-all duration-200`}
+                        >
+                          {menu.link?.label}
+                        </a>
+                      ) : (
+                        <Link
+                          href={menuUrl}
+                          aria-label={menu.link?.label || ""}
+                          aria-roledescription="link"
+                          target={menu.link?.target || "_self"}
+                          className={`${
+                            isActive ? "active" : "text-primary"
+                          } transition-all duration-200`}
+                        >
+                          {menu.link?.label}
+                        </Link>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+
+            <div className="flex justify-end items-center gap-16 md:gap-24">
+              <Link
+                href={
+                  pathname !== "/" && ctaUrl.startsWith("#")
+                    ? `/${ctaUrl}`
+                    : ctaUrl
+                }
+                onClick={(e) => handleSmoothScroll(e, ctaUrl)}
+                target={cta?.target}
+                aria-label="Kontaktieren Sie uns – Startseite"
+                className="btn-dark !hidden sm:!block"
+              >
+                <span>{cta?.Kontakt_label}</span>
+              </Link>
+
+              <Link
+                href={ctaUrl}
+                target={cta?.target}
+                aria-label="Kontaktieren Sie uns – Startseite"
+                className="bg-black p-4 rounded-sm !block sm:!hidden"
+              >
+                <Image
+                  src="/images/phone.svg"
+                  alt="phone icon"
+                  role="img"
+                  width={50}
+                  height={50}
+                  className="w-30 h-30 block sm:hidden"
+                />
+              </Link>
+
+              {/* Mobile Menu Button */}
+              <button
+                id="menu-btn"
+                className="xl:hidden block cursor-pointer"
+                aria-label="Toggle menu"
+                onClick={() => setIsOpen(true)}
+              >
+                <Image
+                  src="/images/menu-btn.svg"
+                  alt="Menu button"
+                  role="img"
+                  width={50}
+                  height={50}
+                  className="w-40 h-40"
+                />
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
-          <div className="fixed inset-y-0 left-0 w-4/5 max-w-sm bg-white p-6 shadow-2xl flex flex-col justify-between overflow-y-auto">
-            <div>
-              <div className="flex items-center justify-between pb-6 border-b border-neutral-100">
-                <div className="flex items-center gap-2">
-                  <div className="w-9 h-9 bg-neutral-900 text-white font-bold flex items-center justify-center rounded-xl">M</div>
-                  <span className="font-bold text-lg font-outfit">{brandConfig.brandName}</span>
-                </div>
-                <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-neutral-400 hover:text-neutral-900 text-xl font-bold">
-                  ✕
-                </button>
-              </div>
-
-              <nav className="mt-6 flex flex-col gap-2">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-base font-semibold text-neutral-800 hover:text-neutral-900 py-3 px-2 rounded-lg hover:bg-neutral-50 transition"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
-            </div>
-
-            <div className="pt-6 border-t border-neutral-100 space-y-3">
-              <Link
-                href="/account"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full text-center py-3.5 bg-neutral-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl block shadow-md"
-              >
-                Customer Account
-              </Link>
-              <p className="text-xs text-center text-neutral-400">© MEANOVA CHAIRS. All rights reserved.</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Instant Search Modal */}
-      {searchOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setSearchOpen(false)} />
-          <div className="flex items-start justify-center min-h-screen pt-16 sm:pt-20 px-4">
-            <div className="relative bg-white rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl z-10 space-y-4">
-              <form onSubmit={handleSearchSubmit} className="relative flex items-center">
-                <svg className="w-5 h-5 text-neutral-400 absolute left-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  placeholder="Search ergonomic, executive, office, gaming chairs..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-12 py-3.5 bg-neutral-100 text-neutral-900 rounded-xl font-medium placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 text-sm"
-                />
-                <button
-                  type="button"
-                  onClick={() => setSearchOpen(false)}
-                  className="absolute right-4 text-xs font-semibold text-neutral-400 hover:text-neutral-900"
-                >
-                  ESC
-                </button>
-              </form>
-
-              {/* Autocomplete Suggestions */}
-              {searchQuery.trim() !== "" && (
-                <div className="space-y-2 pt-2 border-t border-neutral-100 max-h-80 overflow-y-auto">
-                  <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
-                    Product Suggestions ({searchResults.length})
-                  </p>
-                  {searchResults.length === 0 ? (
-                    <p className="text-xs text-neutral-500 py-4 text-center">No matching chair products found.</p>
-                  ) : (
-                    searchResults.map((item) => (
-                      <Link
-                        key={item.id}
-                        href={`/chairs/${item.slug}`}
-                        onClick={() => setSearchOpen(false)}
-                        className="flex items-center justify-between p-2.5 hover:bg-neutral-50 rounded-xl transition group"
-                      >
-                        <div className="flex items-center gap-3">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={item.thumbnail} alt={item.name} className="w-10 h-10 rounded-lg object-cover" />
-                          <div>
-                            <p className="text-xs font-bold text-neutral-900 group-hover:text-neutral-600">{item.name}</p>
-                            <p className="text-[11px] text-neutral-400">{item.categoryName}</p>
-                          </div>
-                        </div>
-                        <span className="text-xs font-bold text-neutral-900">${item.price}</span>
-                      </Link>
-                    ))
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* OffCanvas Menu */}
+      <OffCanvas
+        logo={logoUrl}
+        menus={menus}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        pathname={pathname}
+      />
     </>
   );
-}
+};
+
+export default Header;

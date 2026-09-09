@@ -3,12 +3,10 @@
 import React from 'react'
 import Link from 'next/link'
 import { useShop } from '@/context/ShopContext'
-import { PRODUCTS } from '@/lib/seedData'
-
 export default function ProductComparisonPage() {
-  const { compareList, toggleCompare, clearCompare, addToCart } = useShop()
+  const { compareList, toggleCompare, clearCompare, addToCart, products } = useShop()
 
-  const comparedProducts = PRODUCTS.filter((p) => compareList.includes(p.id))
+  const comparedProducts = products.filter((p) => compareList.includes(p.id))
 
   if (comparedProducts.length === 0) {
     return (

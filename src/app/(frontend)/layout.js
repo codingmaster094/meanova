@@ -1,41 +1,36 @@
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Cookie from "./components/Cookie";
-import CartDrawer from "./components/CartDrawer";
-import QuickViewModal from "./components/QuickViewModal";
-import CompareDrawer from "./components/CompareDrawer";
-import { ShopProvider } from "@/context/ShopContext";
+import Alldata from "./untils/AllDataFatch";
 import "../../../public/css/globals.css";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "MEANOVA CHAIRS | Designed for the way you sit",
-  description:
-    "Discover premium ergonomic chairs, luxury executive leather seating, high-performance office chairs, and gaming thrones engineered for health and comfort.",
-  openGraph: {
-    title: "MEANOVA CHAIRS | Designed for the way you sit",
-    description: "Premium ergonomic, executive, office, and gaming chairs engineered for modern performance.",
-    type: "website",
-  },
-};
+export default async function RootLayout({ children }) {
+  let HeaderData = null;
+  let MenusData = null;
+  let FooterData = null;
 
-export default function RootLayout({ children }) {
+  try {
+    const [header, menus, footer] = await Promise.all([
+      Alldata("header"),
+      Alldata("menus"),
+      Alldata("footer"),
+    ]);
+    HeaderData = header;
+    MenusData = menus;
+    FooterData = footer;
+  } catch (error) {
+    console.error("Layout CMS fetch failed:", error);
+  }
+
   return (
-    <html lang="en">
-      <body className="bg-white text-neutral-900 antialiased font-outfit">
-        <ShopProvider>
-          <Header />
-          <main className="min-h-screen">{children}</main>
-
-          {/* Interactive Drawers & Modals */}
-          <CartDrawer />
-          <QuickViewModal />
-          <CompareDrawer />
-
-          <Footer />
-          <Cookie />
-        </ShopProvider>
+    <html lang="de">
+      <body>
+        <Header HeaderData={HeaderData} MenusData={MenusData} />
+        {children}
+        <Footer FooterData={FooterData} />
+        <Cookie />
       </body>
     </html>
   );

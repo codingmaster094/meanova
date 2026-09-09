@@ -2,9 +2,10 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { COLLECTIONS } from '@/lib/seedData'
+import { useShop } from '@/context/ShopContext'
 
 export default function CollectionsPage() {
+  const { collections: COLLECTIONS } = useShop()
   return (
     <div className="container py-10 sm:py-12 space-y-8 sm:space-y-12">
       <div className="border-b border-neutral-200 pb-6 sm:pb-8 space-y-2">
@@ -15,7 +16,7 @@ export default function CollectionsPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 lg:gap-8">
         {COLLECTIONS.map((col) => (
           <div key={col.id} className="group relative h-80 sm:h-[420px] rounded-3xl overflow-hidden shadow-xl flex flex-col justify-end p-6 sm:p-8 text-white">
             {/* eslint-disable-next-line @next/next/no-img-element */}

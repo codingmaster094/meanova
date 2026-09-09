@@ -3,15 +3,13 @@
 import React, { useState, use } from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { PRODUCTS } from '@/lib/seedData'
-import { useShop } from '@/context/ShopContext'
 import ProductCard from '../../components/ProductCard'
+import { useShop } from '@/context/ShopContext'
 
 export default function ProductDetailPage({ params }) {
   const resolvedParams = use(params)
+  const { products: PRODUCTS, addToCart, toggleWishlist, isInWishlist, toggleCompare, isInCompare, showToast } = useShop()
   const product = PRODUCTS.find((p) => p.slug === resolvedParams.slug)
-
-  const { addToCart, toggleWishlist, isInWishlist, toggleCompare, isInCompare, showToast } = useShop()
   const [selectedColor, setSelectedColor] = useState(product?.colors[0]?.name || '')
   const [quantity, setQuantity] = useState(1)
   const [activeImageIndex, setActiveImageIndex] = useState(0)

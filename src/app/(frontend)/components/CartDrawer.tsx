@@ -3,14 +3,13 @@
 import React from 'react'
 import Link from 'next/link'
 import { useShop } from '@/context/ShopContext'
-import { brandConfig } from '@/lib/brand'
 
 export default function CartDrawer() {
-  const { cart, isCartOpen, setIsCartOpen, removeFromCart, updateQuantity, cartSubtotal, cartTotalCount } = useShop()
+  const { cart, isCartOpen, setIsCartOpen, removeFromCart, updateQuantity, cartSubtotal, cartTotalCount, brand } = useShop()
 
   if (!isCartOpen) return null
 
-  const freeShippingThreshold = brandConfig.policies.freeShippingThreshold
+  const freeShippingThreshold = brand.policies.freeShippingThreshold
   const amountToFreeShipping = Math.max(0, freeShippingThreshold - cartSubtotal)
   const freeShippingPercent = Math.min(100, (cartSubtotal / freeShippingThreshold) * 100)
 
@@ -22,8 +21,8 @@ export default function CartDrawer() {
         onClick={() => setIsCartOpen(false)}
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-white text-neutral-900 shadow-2xl flex flex-col">
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10 overflow-x-hidden">
+        <div className="w-full max-w-md bg-white text-neutral-900 shadow-2xl flex flex-col">
           {/* Header */}
           <div className="p-6 border-b border-neutral-100 flex items-center justify-between">
             <h2 className="text-xl font-bold font-outfit tracking-tight flex items-center gap-2">
@@ -34,7 +33,7 @@ export default function CartDrawer() {
             </h2>
             <button
               onClick={() => setIsCartOpen(false)}
-              className="p-2 text-neutral-400 hover:text-neutral-900 rounded-full hover:bg-neutral-100 transition"
+              className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-neutral-900 rounded-full hover:bg-neutral-100 transition"
               aria-label="Close cart"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -78,7 +77,7 @@ export default function CartDrawer() {
                 <p className="text-xs text-neutral-400 mt-1">Explore our premium chair collection to discover ergonomic perfection.</p>
                 <button
                   onClick={() => setIsCartOpen(false)}
-                  className="mt-6 px-6 py-2.5 bg-neutral-900 text-white text-xs font-semibold uppercase tracking-wider rounded-lg hover:bg-neutral-800 transition"
+                  className="mt-6 px-6 py-2.5 min-h-[44px] bg-neutral-900 text-white text-xs font-semibold uppercase tracking-wider rounded-lg hover:bg-neutral-800 transition"
                 >
                   Explore Chairs
                 </button>
@@ -100,7 +99,7 @@ export default function CartDrawer() {
                         <h4 className="font-semibold text-sm text-neutral-900 line-clamp-1">{item.product.name}</h4>
                         <button
                           onClick={() => removeFromCart(item.product.id)}
-                          className="text-neutral-400 hover:text-red-500 transition"
+                          className="min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-red-500 transition"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -116,14 +115,14 @@ export default function CartDrawer() {
                       <div className="flex items-center border border-neutral-200 rounded-lg">
                         <button
                           onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                          className="px-2.5 py-1 text-neutral-600 hover:bg-neutral-100 rounded-l-lg"
+                          className="px-2.5 py-1 text-neutral-600 hover:bg-neutral-100 rounded-l-lg min-h-[44px] min-w-[44px]"
                         >
                           -
                         </button>
                         <span className="px-3 text-xs font-semibold">{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                          className="px-2.5 py-1 text-neutral-600 hover:bg-neutral-100 rounded-r-lg"
+                          className="px-2.5 py-1 text-neutral-600 hover:bg-neutral-100 rounded-r-lg min-h-[44px] min-w-[44px]"
                         >
                           +
                         </button>
@@ -160,14 +159,14 @@ export default function CartDrawer() {
                 <Link
                   href="/cart"
                   onClick={() => setIsCartOpen(false)}
-                  className="w-full text-center py-3 bg-neutral-200 text-neutral-900 font-semibold text-xs uppercase tracking-wider rounded-xl hover:bg-neutral-300 transition"
+                  className="w-full text-center py-3 min-h-[44px] flex items-center justify-center bg-neutral-200 text-neutral-900 font-semibold text-xs uppercase tracking-wider rounded-xl hover:bg-neutral-300 transition"
                 >
                   View Cart
                 </Link>
                 <Link
                   href="/checkout"
                   onClick={() => setIsCartOpen(false)}
-                  className="w-full text-center py-3 bg-neutral-900 text-white font-semibold text-xs uppercase tracking-wider rounded-xl hover:bg-neutral-800 transition"
+                  className="w-full text-center py-3 min-h-[44px] flex items-center justify-center bg-neutral-900 text-white font-semibold text-xs uppercase tracking-wider rounded-xl hover:bg-neutral-800 transition"
                 >
                   Checkout
                 </Link>

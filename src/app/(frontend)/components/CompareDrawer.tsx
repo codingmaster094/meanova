@@ -3,21 +3,20 @@
 import React from 'react'
 import Link from 'next/link'
 import { useShop } from '@/context/ShopContext'
-import { PRODUCTS } from '@/lib/seedData'
 
 export default function CompareDrawer() {
-  const { compareList, toggleCompare, clearCompare } = useShop()
+  const { compareList, toggleCompare, clearCompare, products } = useShop()
 
   if (compareList.length === 0) return null
 
-  const comparedProducts = PRODUCTS.filter((p) => compareList.includes(p.id))
+  const comparedProducts = products.filter((p) => compareList.includes(p.id))
 
   return (
     <div className="fixed bottom-0 inset-x-0 z-40 bg-neutral-900 text-white border-t border-neutral-800 shadow-2xl transition-transform duration-300">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0 overflow-hidden">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-xs uppercase tracking-wider text-neutral-300">Comparing Chairs:</span>
+            <span className="font-bold text-xs uppercase tracking-wider text-neutral-300 whitespace-nowrap">Comparing Chairs:</span>
             <span className="bg-neutral-800 text-amber-400 text-xs px-2 py-0.5 rounded-full font-semibold">
               {compareList.length}/4
             </span>
@@ -32,7 +31,7 @@ export default function CompareDrawer() {
                 <span className="truncate max-w-[100px] font-medium text-neutral-200">{p.name}</span>
                 <button
                   onClick={() => toggleCompare(p.id)}
-                  className="text-neutral-400 hover:text-white ml-1"
+                  className="text-neutral-400 hover:text-white ml-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
                   ×
                 </button>
@@ -41,16 +40,16 @@ export default function CompareDrawer() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={clearCompare}
-            className="text-xs text-neutral-400 hover:text-white underline font-medium"
+            className="text-xs text-neutral-400 hover:text-white underline font-medium min-h-[44px] px-2"
           >
             Clear All
           </button>
           <Link
             href="/compare"
-            className="px-4 py-2 bg-white text-neutral-900 font-bold text-xs uppercase tracking-wider rounded-lg hover:bg-neutral-100 transition"
+            className="px-4 py-2 bg-white text-neutral-900 font-bold text-xs uppercase tracking-wider rounded-lg hover:bg-neutral-100 transition min-h-[44px] flex items-center justify-center whitespace-nowrap"
           >
             Compare Now →
           </Link>

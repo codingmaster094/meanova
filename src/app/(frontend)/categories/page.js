@@ -2,9 +2,10 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { CATEGORIES } from '@/lib/seedData'
+import { useShop } from '@/context/ShopContext'
 
 export default function CategoriesPage() {
+  const { categories: CATEGORIES } = useShop()
   return (
     <div className="container py-10 sm:py-12 space-y-8 sm:space-y-12">
       <div className="border-b border-neutral-200 pb-6 sm:pb-8 space-y-2">

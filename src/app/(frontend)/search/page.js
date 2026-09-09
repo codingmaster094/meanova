@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { PRODUCTS } from '@/lib/seedData'
 import ProductCard from '../components/ProductCard'
+import { useShop } from '@/context/ShopContext'
 
 function SearchContent() {
   const searchParams = useSearchParams()
+  const { products } = useShop()
   const initialQuery = searchParams.get('q') || ''
   const [query, setQuery] = useState(initialQuery)
 
@@ -15,7 +16,7 @@ function SearchContent() {
   }, [initialQuery])
 
   const results = query.trim()
-    ? PRODUCTS.filter((p) => {
+    ? products.filter((p) => {
         const q = query.toLowerCase()
         return (
           p.name.toLowerCase().includes(q) ||
@@ -24,7 +25,7 @@ function SearchContent() {
           p.materials.some((m) => m.toLowerCase().includes(q))
         )
       })
-    : PRODUCTS
+    : products
 
   return (
     <div className="container py-10 sm:py-12 space-y-8">
@@ -56,7 +57,7 @@ function SearchContent() {
             <p className="text-xs text-neutral-400 mt-1">Try searching for keywords like &quot;Ergonomic&quot;, &quot;Leather&quot;, &quot;Mesh&quot;, &quot;Gaming&quot;.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
             {results.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}

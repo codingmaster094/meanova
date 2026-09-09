@@ -25,7 +25,7 @@ export default function QuickViewModal() {
       />
 
       <div className="flex items-center justify-center min-h-screen p-4">
-        <div className="relative bg-white rounded-2xl max-w-3xl w-full shadow-2xl overflow-hidden z-10 grid grid-cols-1 md:grid-cols-2">
+        <div className="relative bg-white rounded-2xl max-w-3xl w-full shadow-2xl overflow-y-auto overflow-x-hidden max-h-[90vh] z-10 grid grid-cols-1 md:grid-cols-2">
           {/* Close Button */}
           <button
             onClick={() => setQuickViewProduct(null)}
@@ -38,7 +38,7 @@ export default function QuickViewModal() {
 
           {/* Left Gallery */}
           <div className="bg-neutral-100 p-6 flex flex-col justify-between">
-            <div className="w-full h-72 md:h-80 rounded-xl overflow-hidden mb-4 bg-white shadow-inner relative">
+            <div className="w-full h-56 sm:h-72 md:h-80 rounded-xl overflow-hidden mb-4 bg-white shadow-inner relative">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={images[activeImageIndex]}
@@ -118,14 +118,14 @@ export default function QuickViewModal() {
                 <div className="inline-flex items-center border border-neutral-200 rounded-lg">
                   <button
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="px-3 py-1 text-sm font-semibold hover:bg-neutral-100"
+                    className="px-3 py-1 text-sm font-semibold hover:bg-neutral-100 min-h-[44px] min-w-[44px]"
                   >
                     -
                   </button>
                   <span className="px-4 text-xs font-bold">{quantity}</span>
                   <button
                     onClick={() => setQuantity((q) => q + 1)}
-                    className="px-3 py-1 text-sm font-semibold hover:bg-neutral-100"
+                    className="px-3 py-1 text-sm font-semibold hover:bg-neutral-100 min-h-[44px] min-w-[44px]"
                   >
                     +
                   </button>
@@ -135,7 +135,7 @@ export default function QuickViewModal() {
 
             {/* Actions */}
             <div className="space-y-3">
-              <div className="grid grid-cols-5 gap-2">
+              <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                 <button
                   onClick={() => {
                     addToCart(p, quantity, currentColor)
@@ -147,7 +147,7 @@ export default function QuickViewModal() {
                 </button>
                 <button
                   onClick={() => toggleWishlist(p.id)}
-                  className={`col-span-1 border rounded-xl flex items-center justify-center transition ${
+                  className={`col-span-1 min-h-[44px] border rounded-xl flex items-center justify-center transition ${
                     isInWishlist(p.id) ? 'bg-rose-50 border-rose-300 text-rose-600' : 'border-neutral-200 hover:border-neutral-900 text-neutral-600'
                   }`}
                   title="Wishlist"
@@ -156,7 +156,7 @@ export default function QuickViewModal() {
                 </button>
                 <button
                   onClick={() => toggleCompare(p.id)}
-                  className={`col-span-1 border rounded-xl flex items-center justify-center transition text-xs font-semibold ${
+                  className={`col-span-1 min-h-[44px] border rounded-xl flex items-center justify-center transition text-xs font-semibold ${
                     isInCompare(p.id) ? 'bg-neutral-900 text-white' : 'border-neutral-200 hover:border-neutral-900 text-neutral-600'
                   }`}
                   title="Compare"

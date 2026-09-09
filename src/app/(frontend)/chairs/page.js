@@ -1,10 +1,11 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import { PRODUCTS, CATEGORIES } from '@/lib/seedData'
 import ProductCard from '../components/ProductCard'
+import { useShop } from '@/context/ShopContext'
 
 export default function ChairsListingPage() {
+  const { products: PRODUCTS, categories: CATEGORIES } = useShop()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [maxPrice, setMaxPrice] = useState(2000)
@@ -19,7 +20,7 @@ export default function ChairsListingPage() {
     const set = new Set()
     PRODUCTS.forEach((p) => p.materials.forEach((m) => set.add(m)))
     return Array.from(set)
-  }, [])
+  }, [PRODUCTS])
 
   // Filtering & Sorting
   const filteredProducts = useMemo(() => {
@@ -61,7 +62,7 @@ export default function ChairsListingPage() {
       if (sortBy === 'newest') return b.newArrival ? 1 : -1
       return (b.featured ? 1 : 0) - (a.featured ? 1 : 0)
     })
-  }, [searchQuery, selectedCategory, maxPrice, minRating, selectedMaterial, sortBy])
+  }, [PRODUCTS, searchQuery, selectedCategory, maxPrice, minRating, selectedMaterial, sortBy])
 
   const resetFilters = () => {
     setSearchQuery('')
@@ -180,7 +181,7 @@ export default function ChairsListingPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
         {/* Mobile Filter Toggle Button */}
         <div className="lg:hidden flex items-center justify-between bg-neutral-100 p-4 rounded-xl border border-neutral-200">
           <button
@@ -265,7 +266,7 @@ export default function ChairsListingPage() {
               </button>
             </div>
           ) : (
-            <div className={`grid grid-cols-1 sm:grid-cols-2 ${gridCols === 3 ? 'xl:grid-cols-3' : 'xl:grid-cols-3 2xl:grid-cols-4'} gap-6`}>
+            <div className={`grid grid-cols-1 sm:grid-cols-2 ${gridCols === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-3 xl:grid-cols-4'} gap-5 sm:gap-6`}>
               {filteredProducts.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}

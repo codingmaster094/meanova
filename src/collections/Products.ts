@@ -90,6 +90,17 @@ export const Products: CollectionConfig = {
       label: { en: 'Main Thumbnail', de: 'Haupt-Vorschaubild' },
     },
     {
+      name: 'thumbnailUrl',
+      type: 'text',
+      label: { en: 'Thumbnail URL (fallback)', de: 'Vorschaubild-URL (Fallback)' },
+    },
+    {
+      name: 'imageUrls',
+      type: 'array',
+      label: { en: 'Image URLs (fallback)', de: 'Bild-URLs (Fallback)' },
+      fields: [{ name: 'url', type: 'text', required: true }],
+    },
+    {
       name: 'materials',
       type: 'array',
       label: { en: 'Materials', de: 'Materialien' },
@@ -167,6 +178,12 @@ export const Products: CollectionConfig = {
       type: 'number',
       defaultValue: 4.8,
       label: { en: 'Average Rating', de: 'Bewertung' },
+    },
+    {
+      name: 'reviewCount',
+      type: 'number',
+      defaultValue: 0,
+      label: { en: 'Review Count', de: 'Anzahl Bewertungen' },
     },
     {
       name: 'featured',

@@ -37,6 +37,11 @@ export const Categories: CollectionConfig = {
       relationTo: 'media',
     },
     {
+      name: 'imageUrl',
+      type: 'text',
+      label: { en: 'Image URL (fallback)', de: 'Bild-URL (Fallback)' },
+    },
+    {
       name: 'parentCategory',
       type: 'relationship',
       relationTo: 'categories',

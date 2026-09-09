@@ -3,10 +3,9 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { useShop } from '@/context/ShopContext'
-import { brandConfig } from '@/lib/brand'
 
 export default function CheckoutPage() {
-  const { cart, cartSubtotal, clearCart } = useShop()
+  const { cart, cartSubtotal, clearCart, brand } = useShop()
   const [orderPlaced, setOrderPlaced] = useState(false)
   const [formData, setFormData] = useState({
     firstName: '',
@@ -19,7 +18,7 @@ export default function CheckoutPage() {
     country: 'United States',
   })
 
-  const shippingFee = cartSubtotal >= brandConfig.policies.freeShippingThreshold ? 0 : 25
+  const shippingFee = cartSubtotal >= brand.policies.freeShippingThreshold ? 0 : 25
   const estimatedTax = cartSubtotal * 0.08
   const grandTotal = cartSubtotal + shippingFee + estimatedTax
 
@@ -37,7 +36,7 @@ export default function CheckoutPage() {
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold font-outfit text-neutral-900">Order Placed Successfully!</h1>
         <p className="text-xs sm:text-sm text-neutral-600">
-          Thank you for choosing <strong className="text-neutral-900">{brandConfig.brandName}</strong>. Order confirmation #MNV-{Math.floor(100000 + Math.random() * 900000)} has been sent to your email.
+          Thank you for choosing <strong className="text-neutral-900">{brand.brandName}</strong>. Order confirmation #MNV-{Math.floor(100000 + Math.random() * 900000)} has been sent to your email.
         </p>
         <div className="pt-4 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
           <Link

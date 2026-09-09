@@ -3,13 +3,12 @@
 import React from 'react'
 import Link from 'next/link'
 import { useShop } from '@/context/ShopContext'
-import { PRODUCTS } from '@/lib/seedData'
 import ProductCard from '../components/ProductCard'
 
 export default function WishlistPage() {
-  const { wishlist } = useShop()
+  const { wishlist, products } = useShop()
 
-  const savedProducts = PRODUCTS.filter((p) => wishlist.includes(p.id))
+  const savedProducts = products.filter((p) => wishlist.includes(p.id))
 
   return (
     <div className="container py-10 sm:py-12 space-y-8">
@@ -35,7 +34,7 @@ export default function WishlistPage() {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
           {savedProducts.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}

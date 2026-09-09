@@ -1,11 +1,10 @@
 'use client'
 
 import React, { useState } from 'react'
-import { brandConfig } from '@/lib/brand'
 import { useShop } from '@/context/ShopContext'
 
 export default function ContactPage() {
-  const { showToast } = useShop()
+  const { showToast, brand } = useShop()
   const [submitted, setSubmitted] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
@@ -35,23 +34,23 @@ export default function ContactPage() {
         <div className="lg:col-span-5 space-y-6 bg-neutral-900 text-white p-6 sm:p-8 rounded-3xl">
           <h2 className="text-xl sm:text-2xl font-bold font-outfit text-white">Showroom & Headquarters</h2>
           <p className="text-xs text-neutral-300 leading-relaxed">
-            Visit our flagship design plaza to test out all ergonomic models, trial custom leather options, and consult with our postural posture team.
+            {brand.contactIntro}
           </p>
 
           <div className="space-y-4 pt-4 border-t border-neutral-800 text-xs text-neutral-300">
             <div>
               <strong className="block text-white mb-1">Address:</strong>
-              <p>{brandConfig.address}</p>
+              <p>{brand.address}</p>
             </div>
             <div>
               <strong className="block text-white mb-1">Direct Support:</strong>
-              <p>Email: {brandConfig.contactEmail}</p>
-              <p>Phone: {brandConfig.phone}</p>
+              <p>Email: {brand.contactEmail}</p>
+              <p>Phone: {brand.phone}</p>
             </div>
             <div>
               <strong className="block text-white mb-1">Hours:</strong>
-              <p>Monday – Friday: 9:00 AM – 6:00 PM EST</p>
-              <p>Saturday: 10:00 AM – 4:00 PM EST</p>
+              <p>{brand.hoursWeekday}</p>
+              <p>{brand.hoursSaturday}</p>
             </div>
           </div>
         </div>
@@ -63,7 +62,7 @@ export default function ContactPage() {
           {submitted ? (
             <div className="p-6 bg-emerald-50 text-emerald-900 rounded-2xl border border-emerald-200 space-y-2">
               <h3 className="font-bold text-base">Thank you for reaching out!</h3>
-              <p className="text-xs">A {brandConfig.brandName} seating specialist will respond within 24 business hours.</p>
+              <p className="text-xs">A {brand.brandName} seating specialist will respond within 24 business hours.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
