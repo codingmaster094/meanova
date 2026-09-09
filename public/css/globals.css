@@ -146,10 +146,15 @@
     }
 
   body{
-    @apply font-outfit
+    @apply font-outfit overflow-x-hidden antialiased text-neutral-900 bg-white
   }
-   .container{
-        @apply mx-auto px-15
+   .container {
+        width: 100%;
+        max-width: 1600px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: clamp(16px, 3vw, 48px);
+        padding-right: clamp(16px, 3vw, 48px);
     }
     nav ul li a{
       @apply relative before:content-[''] before:w-0 before:h-2 before:absolute before:-bottom-6 before:left-1/2 before:bg-primary before:opacity-0 before:invisible hover:before:w-full hover:before:right-0 hover:before:left-0 hover:before:opacity-100 hover:before:visible before:transition-all before:duration-500 before:ease-in-out

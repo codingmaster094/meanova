@@ -1,162 +1,93 @@
-'use client';
-import Image from "next/image";
+"use client";
+import React from "react";
 import Link from "next/link";
+import { brandConfig } from "@/lib/brand";
+import { CATEGORIES } from "@/lib/seedData";
 
-const Footer = ({ FooterData }) => {
-  // Safely destructure data with default empty objects/arrays to ensure data paths exist
-  const {
-    // footerlogo = {},
-    kontakt = {},
-    social = [],
-    sprechzeiten = [],
-    navigation = [],
-    legalLinks = [],
-    copyright = ""
-  } = FooterData || {}; 
-  const navMenus = navigation[0]?.menus ?? [];
-
-    const handleSmoothScroll = (e, targetId) => {
-    if (!targetId?.startsWith('#')) return;
-    e.preventDefault();
-    document.querySelector(targetId)?.scrollIntoView({ behavior: 'smooth' });
-  };
+export default function Footer() {
   return (
-    <>
-      <footer>
-        <div className="footer-top pt-50 md:pt-80 pb-50 md:pb-100 bg-primary_1 text-white">
-          <div className="container">
-            <div className="inner flex justify-start xlg:justify-between items-start gap-20 xl:gap-40 flex-wrap xlg:flex-nowrap">
-              {/* col1 */}
-              {/* <div className='w-full sm:w-[calc(50%-20px)] md:w-[calc(33%-40px)] xlg:w-full'>
-                {footerlogo.url && ( // Only render if the URL exists
-                  <Link href="/">
-                    <Image
-                      src={footerlogo.url}
-                      alt="company logo for footer"
-                      width={48}
-                      height={48}
-                      role="img"
-                      className='w-48 object-cover'
-                    />
-                  </Link>
-                )}
-              </div> */}
-              {/* col2 */}
-              <div className='foot-col1 flex flex-col gap-16 md:gap-32 w-full md:w-[calc(50%-20px)] lg:w-[calc(33%-40px)]  xlg:w-full'>
-                <span className="font-jakarta font-medium text-h4">Kontakt</span>
-                <ul className='md:space-y-8'>
-                  {kontakt.address && (
-                    <li>
-                      <div className="flex items-start gap-8">
-                        <Image src="/images/location.svg" alt="icon of location" role="img" width={20} height={20} className='w-20 h-20' />
-                        <span dangerouslySetInnerHTML={{__html:kontakt.address}}></span>
-                      </div>
-                    </li>
-                  )}
-                  {kontakt.phone_urls && (
-                    <li>
-                      <Link href={`tel:${kontakt.phone_urls.replace(/[\s()-]/g, '')}`}role='link' className="flex items-start gap-8">
-                        <Image src="/images/phone.svg" alt="icon of phone" role="img" width={20} height={20} className='w-20 h-20' />
-                        <span>{kontakt.phone}</span>
-                      </Link>
-                    </li>
-                  )}
-                  {kontakt.email_url && (
-                    <li>
-                      <Link href={kontakt.email_url} role='link' className="flex items-start gap-8">
-                        <Image src="/images/mail.svg" alt="icon of mail" role="img" width={20} height={20} className='w-20 h-20' />
-                        <span>{kontakt.email}</span>
-                      </Link>
-                    </li>
-                  )}
-                </ul>
-                <div className='flex gap-16 justify-start items-center'>
-                  {
-                    social.map((item, i) => item.social_url ? ( // Check for URL again for the Link prop
-                      <Link href={item.social_url} role="link" target="_blank" key={i}>
-                        <Image
-                          src={item.social_icon?.url || ''} // Use optional chaining for nested object
-                          alt={`${item.social_icon?.alt || 'social'} icon`}
-                          role="img"
-                          width={item.social_icon?.width || 24} // Provide a default width/height
-                          height={item.social_icon?.height || 24}
-                        />
-                      </Link>
-                    ) : null)
-                  }
-                </div>
+    <footer className="bg-neutral-950 text-white border-t border-neutral-900 pt-20 pb-14">
+      <div className="container">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 pb-20 border-b border-neutral-850">
+          {/* Brand Info */}
+          <div className="sm:col-span-2 space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white text-neutral-950 font-extrabold flex items-center justify-center rounded-2xl text-xl tracking-tighter shadow-md font-outfit">
+                M
               </div>
-              {/* col3 */}
-              <div className='flex flex-col gap-16 md:gap-32 w-full md:w-[calc(50%-20px)] lg:w-[calc(33%-40px)] xlg:w-full'>
-                <span className="font-jakarta font-medium text-h4/snug">Öffnungszeiten</span>
-                <ul className="timings-list [&_li]:grid [&_li]:grid-cols-[120px_1fr] space-y-8 *:leading-snug">
-                  {
-                    sprechzeiten.map((item, i) => (
-                      <li key={i}>
-                        <span className="font-semibold">{item.day}</span>{item.time}
-                      </li>
-                    ))
-                  }
-                </ul>
-              </div>
-              {/* col4 */}
-
-              <div className='flex flex-col gap-16 md:gap-32 w-full md:w-[calc(50%-20px)] lg:w-[calc(33%-40px)] xlg:w-full'>
-                <span className="font-jakarta font-medium text-h4/snug">Navigation</span>
-                <ul className='space-y-8 *:leading-snug'>
-                  {
-                    navMenus.map((item, i) => { // Use the safely extracted navMenus
-                      if (item.url) {
-                        return (
-                          <li key={i}>
-                            <Link href={item.url} role='link' onClick={(e) => handleSmoothScroll(e, item.url)}>
-                              {item.label}
-                            </Link>
-                          </li>
-                        );
-                      }
-                      return null;
-                    })
-                  }
-                </ul>
-
-              </div>
-              {/* col5 */}
-              <div className='flex flex-col gap-16 md:gap-32 w-full md:w-[calc(50%-20px)] lg:w-[calc(33%-40px)] xlg:w-full'>
-                <span className="font-jakarta font-medium text-h4/snug">Rechtliches </span>
-                <ul className='space-y-8 *:leading-snug'>
-                  {
-                    legalLinks.map((item, i) => {
-                      if (item.url) {
-                        return (
-                          <li key={i}>
-                            <Link href={item.url} role='link'>
-                              {item.label}
-                            </Link>
-                          </li>
-                        );
-                      }
-                      return null;
-                    })
-                  }
-
-                </ul>
-
-              </div>
+              <span className="font-outfit font-black text-2xl tracking-tight text-white">
+                {brandConfig.brandName}
+              </span>
+            </div>
+            <p className="text-sm text-neutral-400 leading-relaxed max-w-sm">
+              {brandConfig.brandDescription}
+            </p>
+            <div className="pt-2 text-xs sm:text-sm text-neutral-400 space-y-2">
+              <p><strong className="text-neutral-200">Showroom & HQ:</strong> {brandConfig.address}</p>
+              <p><strong className="text-neutral-200">Email:</strong> {brandConfig.contactEmail}</p>
+              <p><strong className="text-neutral-200">Phone:</strong> {brandConfig.phone}</p>
             </div>
           </div>
-        </div>
-        {
-          copyright ? 
-        <div className='footer-btm bg-white'>
-          <div className='p-16 flex justify-center items-center text-center text-base text-primary'>
-            <p>{copyright}</p>
-          </div>
-        </div> : null
-        }
-      </footer>
-    </>
-  )
-}
 
-export default Footer
+          {/* Chair Categories */}
+          <div className="space-y-4">
+            <h4 className="font-bold text-xs uppercase tracking-widest text-amber-400 font-outfit">Categories</h4>
+            <ul className="space-y-2.5 text-xs sm:text-sm text-neutral-400">
+              {CATEGORIES.map((cat) => (
+                <li key={cat.id}>
+                  <Link href={`/categories/${cat.slug}`} className="hover:text-white transition py-1 block">
+                    {cat.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Customer Care */}
+          <div className="space-y-4">
+            <h4 className="font-bold text-xs uppercase tracking-widest text-amber-400 font-outfit">Customer Support</h4>
+            <ul className="space-y-2.5 text-xs sm:text-sm text-neutral-400">
+              <li><Link href="/chairs" className="hover:text-white transition py-1 block">All Chairs Catalog</Link></li>
+              <li><Link href="/collections" className="hover:text-white transition py-1 block">Signature Collections</Link></li>
+              <li><Link href="/compare" className="hover:text-white transition py-1 block">Chair Comparison Tool</Link></li>
+              <li><Link href="/wishlist" className="hover:text-white transition py-1 block">Saved Wishlist</Link></li>
+              <li><Link href="/cart" className="hover:text-white transition py-1 block">Shopping Cart</Link></li>
+              <li><Link href="/contact" className="hover:text-white transition py-1 block">Contact & Showroom</Link></li>
+            </ul>
+          </div>
+
+          {/* Newsletter */}
+          <div className="space-y-4">
+            <h4 className="font-bold text-xs uppercase tracking-widest text-amber-400 font-outfit">Stay Informed</h4>
+            <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+              Subscribe for ergonomics advice, new seating releases, and exclusive member discounts.
+            </p>
+            <form onSubmit={(e) => e.preventDefault()} className="space-y-3">
+              <input
+                type="email"
+                placeholder="Enter your email address"
+                className="w-full px-4 py-3.5 bg-neutral-900 border border-neutral-800 rounded-2xl text-xs sm:text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-amber-400 font-medium"
+              />
+              <button
+                type="submit"
+                className="w-full py-3.5 bg-white text-neutral-950 font-bold text-xs uppercase tracking-wider rounded-2xl hover:bg-neutral-200 transition shadow-lg min-h-[48px]"
+              >
+                Subscribe
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="pt-10 flex flex-col sm:flex-row items-center justify-between text-xs sm:text-sm text-neutral-500 gap-6 text-center sm:text-left font-medium">
+          <p>© {new Date().getFullYear()} {brandConfig.brandName}. All rights reserved.</p>
+          <div className="flex flex-wrap justify-center gap-8">
+            <Link href="/datenschutzerklaerung" className="hover:text-neutral-300">Privacy Policy</Link>
+            <Link href="/impressum" className="hover:text-neutral-300">Terms of Service</Link>
+            <Link href="/contact" className="hover:text-neutral-300">Warranty Policy</Link>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}

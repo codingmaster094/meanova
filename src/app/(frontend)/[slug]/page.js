@@ -14,6 +14,17 @@ const RESERVED = new Set([
   'datenschutzerklaerung',
   'sitemap.xml',
   'robots.txt',
+  'chairs',
+  'categories',
+  'collections',
+  'wishlist',
+  'cart',
+  'checkout',
+  'account',
+  'compare',
+  'search',
+  'about',
+  'contact',
 ])
 
 export async function generateMetadata({ params }) {
