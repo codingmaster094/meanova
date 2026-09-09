@@ -8,14 +8,22 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Pages } from './collections/Pages'
+import { Products } from './collections/Products'
+import { Categories } from './collections/Categories'
+import { ProductCollections } from './collections/Collections'
+import { Reviews } from './collections/Reviews'
+import { Customers } from './collections/Customers'
+import { Orders } from './collections/Orders'
 import { Header } from './globals/Header/config'
 import { Footer } from './globals/Footer/config'
 import { menus } from './globals/menus/config'
 import { Impressum } from './globals/impressum/config'
 import { Datenschutzerklärung } from './globals/datenschutzerklärung/config'
 import { Robots } from './globals/robots/config'
-import { Pages } from './collections/Pages'
 import { SiteSettings } from './globals/SiteSettings/config'
+import { HomePage } from './globals/HomePage/config'
+import { AboutPage } from './globals/AboutPage/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -68,7 +76,7 @@ export default buildConfig({
   },
   cors: allowedOrigins,
   csrf: allowedOrigins,
-  collections: [Users, Media , Pages],
+  collections: [Users, Media, Pages, Products, Categories, ProductCollections, Reviews, Customers, Orders],
   globals: [
     Header,
     Footer,
@@ -77,6 +85,8 @@ export default buildConfig({
     Datenschutzerklärung,
     Robots,
     SiteSettings,
+    HomePage,
+    AboutPage,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || 'payload-secret-placeholder',

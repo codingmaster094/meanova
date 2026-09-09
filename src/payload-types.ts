@@ -64,12 +64,19 @@ export type SupportedTimezones =
 export interface Config {
   auth: {
     users: UserAuthOperations;
+    customers: CustomerAuthOperations;
   };
   blocks: {};
   collections: {
     users: User;
     media: Media;
     pages: Page;
+    products: Product;
+    categories: Category;
+    collections: Collection;
+    reviews: Review;
+    customers: Customer;
+    orders: Order;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -79,6 +86,12 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    collections: CollectionsSelect<false> | CollectionsSelect<true>;
+    reviews: ReviewsSelect<false> | ReviewsSelect<true>;
+    customers: CustomersSelect<false> | CustomersSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -94,6 +107,8 @@ export interface Config {
     datenschutzerklaerung: Datenschutzerklaerung;
     robots: Robot;
     'site-settings': SiteSetting;
+    'home-page': HomePage;
+    'about-page': AboutPage;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
@@ -103,17 +118,41 @@ export interface Config {
     datenschutzerklaerung: DatenschutzerklaerungSelect<false> | DatenschutzerklaerungSelect<true>;
     robots: RobotsSelect<false> | RobotsSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'home-page': HomePageSelect<false> | HomePageSelect<true>;
+    'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
   };
   locale: null;
-  user: User & {
-    collection: 'users';
-  };
+  user:
+    | (User & {
+        collection: 'users';
+      })
+    | (Customer & {
+        collection: 'customers';
+      });
   jobs: {
     tasks: unknown;
     workflows: unknown;
   };
 }
 export interface UserAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
+  };
+}
+export interface CustomerAuthOperations {
   forgotPassword: {
     email: string;
     password: string;
@@ -731,6 +770,195 @@ export interface HtmlBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  sku: string;
+  price: number;
+  compareAtPrice?: number | null;
+  category: string | Category;
+  collections?: (string | Collection)[] | null;
+  shortDescription?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  images?:
+    | {
+        image: string | Media;
+        id?: string | null;
+      }[]
+    | null;
+  thumbnail?: (string | null) | Media;
+  thumbnailUrl?: string | null;
+  imageUrls?:
+    | {
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  materials?:
+    | {
+        material: string;
+        id?: string | null;
+      }[]
+    | null;
+  colors?:
+    | {
+        name: string;
+        hex: string;
+        id?: string | null;
+      }[]
+    | null;
+  features?:
+    | {
+        feature: string;
+        id?: string | null;
+      }[]
+    | null;
+  specifications?:
+    | {
+        name: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  dimensions?: {
+    width?: string | null;
+    depth?: string | null;
+    height?: string | null;
+    seatHeight?: string | null;
+  };
+  weight?: string | null;
+  maxLoad?: string | null;
+  warranty?: string | null;
+  stock?: number | null;
+  availability?: ('in_stock' | 'out_of_stock' | 'pre_order') | null;
+  rating?: number | null;
+  reviewCount?: number | null;
+  featured?: boolean | null;
+  bestSeller?: boolean | null;
+  newArrival?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  image?: (string | null) | Media;
+  imageUrl?: string | null;
+  parentCategory?: (string | null) | Category;
+  featured?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections".
+ */
+export interface Collection {
+  id: string;
+  name: string;
+  slug: string;
+  tagline?: string | null;
+  description?: string | null;
+  image?: (string | null) | Media;
+  imageUrl?: string | null;
+  products?: (string | Product)[] | null;
+  featured?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews".
+ */
+export interface Review {
+  id: string;
+  product: string | Product;
+  customerName: string;
+  rating: number;
+  title: string;
+  review: string;
+  verifiedPurchase?: boolean | null;
+  status?: ('approved' | 'pending' | 'rejected') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers".
+ */
+export interface Customer {
+  id: string;
+  name: string;
+  phone?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: string;
+  orderNumber: string;
+  items?:
+    | {
+        productName: string;
+        productId: string;
+        quantity: number;
+        unitPrice: number;
+        color?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  subtotal: number;
+  shipping?: number | null;
+  tax?: number | null;
+  total: number;
+  paymentStatus?: ('pending' | 'paid' | 'failed') | null;
+  orderStatus?: ('processing' | 'shipped' | 'delivered' | 'cancelled') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -747,12 +975,41 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: string | Page;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: string | Product;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: string | Category;
+      } | null)
+    | ({
+        relationTo: 'collections';
+        value: string | Collection;
+      } | null)
+    | ({
+        relationTo: 'reviews';
+        value: string | Review;
+      } | null)
+    | ({
+        relationTo: 'customers';
+        value: string | Customer;
+      } | null)
+    | ({
+        relationTo: 'orders';
+        value: string | Order;
       } | null);
   globalSlug?: string | null;
-  user: {
-    relationTo: 'users';
-    value: string | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: string | User;
+      }
+    | {
+        relationTo: 'customers';
+        value: string | Customer;
+      };
   updatedAt: string;
   createdAt: string;
 }
@@ -762,10 +1019,15 @@ export interface PayloadLockedDocument {
  */
 export interface PayloadPreference {
   id: string;
-  user: {
-    relationTo: 'users';
-    value: string | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: string | User;
+      }
+    | {
+        relationTo: 'customers';
+        value: string | Customer;
+      };
   key?: string | null;
   value?:
     | {
@@ -1239,6 +1501,176 @@ export interface HtmlBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  sku?: T;
+  price?: T;
+  compareAtPrice?: T;
+  category?: T;
+  collections?: T;
+  shortDescription?: T;
+  description?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  thumbnail?: T;
+  thumbnailUrl?: T;
+  imageUrls?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
+  materials?:
+    | T
+    | {
+        material?: T;
+        id?: T;
+      };
+  colors?:
+    | T
+    | {
+        name?: T;
+        hex?: T;
+        id?: T;
+      };
+  features?:
+    | T
+    | {
+        feature?: T;
+        id?: T;
+      };
+  specifications?:
+    | T
+    | {
+        name?: T;
+        value?: T;
+        id?: T;
+      };
+  dimensions?:
+    | T
+    | {
+        width?: T;
+        depth?: T;
+        height?: T;
+        seatHeight?: T;
+      };
+  weight?: T;
+  maxLoad?: T;
+  warranty?: T;
+  stock?: T;
+  availability?: T;
+  rating?: T;
+  reviewCount?: T;
+  featured?: T;
+  bestSeller?: T;
+  newArrival?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  image?: T;
+  imageUrl?: T;
+  parentCategory?: T;
+  featured?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections_select".
+ */
+export interface CollectionsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  tagline?: T;
+  description?: T;
+  image?: T;
+  imageUrl?: T;
+  products?: T;
+  featured?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews_select".
+ */
+export interface ReviewsSelect<T extends boolean = true> {
+  product?: T;
+  customerName?: T;
+  rating?: T;
+  title?: T;
+  review?: T;
+  verifiedPurchase?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers_select".
+ */
+export interface CustomersSelect<T extends boolean = true> {
+  name?: T;
+  phone?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface OrdersSelect<T extends boolean = true> {
+  orderNumber?: T;
+  items?:
+    | T
+    | {
+        productName?: T;
+        productId?: T;
+        quantity?: T;
+        unitPrice?: T;
+        color?: T;
+        id?: T;
+      };
+  subtotal?: T;
+  shipping?: T;
+  tax?: T;
+  total?: T;
+  paymentStatus?: T;
+  orderStatus?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents_select".
  */
 export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
@@ -1522,6 +1954,141 @@ export interface SiteSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page".
+ */
+export interface HomePage {
+  id: string;
+  hero?: {
+    badge?: string | null;
+    heading?: string | null;
+    headingAccent?: string | null;
+    description?: string | null;
+    imageUrl?: string | null;
+    primaryCta?: {
+      label?: string | null;
+      url?: string | null;
+    };
+    secondaryCta?: {
+      label?: string | null;
+      url?: string | null;
+    };
+    metrics?:
+      | {
+          value: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  categoriesSection?: {
+    eyebrow?: string | null;
+    heading?: string | null;
+    linkLabel?: string | null;
+    linkUrl?: string | null;
+  };
+  productsSection?: {
+    eyebrow?: string | null;
+    heading?: string | null;
+    linkLabel?: string | null;
+    linkUrl?: string | null;
+  };
+  whyChoose?: {
+    eyebrow?: string | null;
+    heading?: string | null;
+    description?: string | null;
+    items?:
+      | {
+          title: string;
+          description: string;
+          icon?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  ergo?: {
+    eyebrow?: string | null;
+    heading?: string | null;
+    description?: string | null;
+    ctaLabel?: string | null;
+    ctaUrl?: string | null;
+    tabs?:
+      | {
+          key: string;
+          title: string;
+          description?: string | null;
+          imageUrl?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  collectionsSection?: {
+    eyebrow?: string | null;
+    heading?: string | null;
+  };
+  testimonials?: {
+    eyebrow?: string | null;
+    heading?: string | null;
+    items?:
+      | {
+          quote: string;
+          author: string;
+          role?: string | null;
+          rating?: number | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  cta?: {
+    eyebrow?: string | null;
+    heading?: string | null;
+    description?: string | null;
+    primaryCta?: {
+      label?: string | null;
+      url?: string | null;
+    };
+    secondaryCta?: {
+      label?: string | null;
+      url?: string | null;
+    };
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page".
+ */
+export interface AboutPage {
+  id: string;
+  heroEyebrow?: string | null;
+  heroHeading?: string | null;
+  heroDescription?: string | null;
+  storyEyebrow?: string | null;
+  storyHeading?: string | null;
+  storyParagraphs?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  storyImageUrl?: string | null;
+  pillarsHeading?: string | null;
+  pillars?:
+    | {
+        icon?: string | null;
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  ctaHeading?: string | null;
+  ctaLabel?: string | null;
+  ctaUrl?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -1745,6 +2312,165 @@ export interface SiteSettingsSelect<T extends boolean = true> {
               canonicalUrl?: T;
             };
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page_select".
+ */
+export interface HomePageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        badge?: T;
+        heading?: T;
+        headingAccent?: T;
+        description?: T;
+        imageUrl?: T;
+        primaryCta?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+            };
+        secondaryCta?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+            };
+        metrics?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              id?: T;
+            };
+      };
+  categoriesSection?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        linkLabel?: T;
+        linkUrl?: T;
+      };
+  productsSection?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        linkLabel?: T;
+        linkUrl?: T;
+      };
+  whyChoose?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        description?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              icon?: T;
+              id?: T;
+            };
+      };
+  ergo?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        description?: T;
+        ctaLabel?: T;
+        ctaUrl?: T;
+        tabs?:
+          | T
+          | {
+              key?: T;
+              title?: T;
+              description?: T;
+              imageUrl?: T;
+              id?: T;
+            };
+      };
+  collectionsSection?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+      };
+  testimonials?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        items?:
+          | T
+          | {
+              quote?: T;
+              author?: T;
+              role?: T;
+              rating?: T;
+              id?: T;
+            };
+      };
+  cta?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        description?: T;
+        primaryCta?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+            };
+        secondaryCta?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page_select".
+ */
+export interface AboutPageSelect<T extends boolean = true> {
+  heroEyebrow?: T;
+  heroHeading?: T;
+  heroDescription?: T;
+  storyEyebrow?: T;
+  storyHeading?: T;
+  storyParagraphs?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  storyImageUrl?: T;
+  pillarsHeading?: T;
+  pillars?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  ctaHeading?: T;
+  ctaLabel?: T;
+  ctaUrl?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
